@@ -4,30 +4,20 @@ pub mod sandbox {
   }
 }
 
-pub mod bnn {
-  pub struct BitVec {
-    storage: Vec<u32>,
-    nbits: usize,
-    unit_size: usize
-  }
-
-  pub fn get(&self, i: usize) -> Option<bool> {
-    if i >= self.nbits {
-      return None;
-    }
-    let w = i / self.unit_size;
-    let b = i % self.unit_size;
-    let x = self.storage.get(w).unwrap();
-    return (x & (1 << b)) != 0;
-  }
-}
-
-#[cfg(test)]
-mod sandbox_test {
-  use sandbox::*;
-
-  #[test]
-  fn add_test() {
-    assert!(add(3, 5) == 8);
-  }
-}
+// pub mod bnn {
+//   pub struct BitVec {
+//     storage: Vec<u32>,
+//     nbits: usize,
+//     unit_size: usize
+//   }
+//
+//   pub fn get(&self, i: usize) -> Option<bool> {
+//     if i >= self.nbits {
+//       return None;
+//     }
+//     let w = i / self.unit_size;
+//     let b = i % self.unit_size;
+//     let x = self.storage.get(w).unwrap();
+//     return (x & (1 << b)) != 0;
+//   }
+// }
