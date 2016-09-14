@@ -13,7 +13,7 @@ mod bitvec_tests {
   fn bitvec_new() {
     let y: u32 = 1 << 31;
     let x = BitVec::new(vec![y], 1);
-    assert!(x.get(0) == Some(true));
-    assert!(x.get(1) == None);
+    assert_eq!(x.get(0), Some(true));
+    assert_eq!(x.get(1), None);
   }
 }

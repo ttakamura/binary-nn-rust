@@ -17,9 +17,18 @@ impl BitVec {
     if i >= self.nbits {
       return None;
     }
-    let w = i / U32_SIZE;
-    let b = i % U32_SIZE;
+    let (w, b) = self.index_of(i);
     let x = self.storage.get(w).unwrap();
     return Some((x & (1 << b)) != 0);
+  }
+
+  #[inline]
+  pub fn index_of(&self, i: usize) -> (usize, usize) {
+    if i >= self.nbits {
+      panic!("index is over than self.nbits");
+    }
+    let w: usize = i / U32_SIZE;
+    let b: usize = 31 - (i % U32_SIZE);
+    return (w, b);
   }
 }
