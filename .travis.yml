@@ -1,7 +1,15 @@
 language: rust
 
+rust:
+  - stable
+  - beta
+  - nightly
+
 sudo: false
 
 script:
   - cargo build --verbose
   - cargo test --verbose --no-fail-fast
+  - |
+    [ $TRAVIS_RUST_VERSION != nightly ] || cargo bench --verbose
+  # - cargo doc
