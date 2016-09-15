@@ -5,11 +5,6 @@ pub struct BitVec {
   nbits: usize,
 }
 
-fn mask_for_bits(bits: usize) -> u32 {
-    // Note especially that a perfect multiple of u32::BITS should mask all 1s.
-    !0 >> (u32::BITS - bits % u32::BITS) % u32::BITS
-}
-
 impl BitVec {
   pub fn new(vec: Vec<u32>, nbits: usize) -> BitVec {
     return BitVec {
@@ -20,7 +15,7 @@ impl BitVec {
 
   pub fn new_bool(vec: Vec<bool>) -> BitVec {
     let nbits = vec.len();
-    let mut int_vec = Vec::u32::new();
+    let mut int_vec: Vec<u32> = vec![];
 
     for block in vec.chunks(U32_SIZE) {
       let mut tmp: u32 = 0;
@@ -39,18 +34,64 @@ impl BitVec {
     if i >= self.nbits {
       return None;
     }
-    let (w, b) = BitVec::offset_of(i);
+    let (w, b) = offset_of(i);
     let x = self.storage.get(w).unwrap();
-    return Some((x & (1 << b)) != 0);
+    return Some(bit_to_bool(*x, b));
   }
+}
 
-  #[inline]
-  fn offset_of(i: usize) -> (usize, usize) {
-    let w: usize = i / U32_SIZE;
-    let b: usize = U32_SIZE - ((i % U32_SIZE) + 1);
-    return (w, b);
+// #[inline]
+// fn block_of(index: usize) -> usize {
+//  index / U32_SIZE
+// }
+
+#[inline]
+fn offset_of(index: usize) -> (usize, usize) {
+  let w: usize = index / U32_SIZE;
+  let b: usize = index % U32_SIZE;
+  return (w, b);
+}
+
+#[inline]
+fn bit_to_bool(x: u32, index: usize) -> bool {
+  if index >= U32_SIZE {
+    panic!("index should smaller than 32");
   }
+  (x & (1 << (U32_SIZE - (index + 1)))) != 0
+}
 
-  #[inline]
-  fn bitmask()
+// -------------------------------------------------------------------------------------------------
+
+#[test]
+fn offset_of_test() {
+  assert_eq!(offset_of(0), (0, 0));
+  assert_eq!(offset_of(1), (0, 1));
+  assert_eq!(offset_of(31), (0, 31));
+  assert_eq!(offset_of(32), (1, 0));
+  assert_eq!(offset_of(34), (1, 2));
+  assert_eq!(offset_of(63), (1, 31));
+  assert_eq!(offset_of(64), (2, 0));
+}
+
+#[test]
+fn bit_to_bool_test() {
+  assert_eq!(bit_to_bool(1 << 30, 0), false);
+  assert_eq!(bit_to_bool(1 << 30, 1), true);
+  assert_eq!(bit_to_bool(1 << 30, 2), false);
+
+  assert_eq!(bit_to_bool(2, 29), false);
+  assert_eq!(bit_to_bool(2, 30), true);
+  assert_eq!(bit_to_bool(2, 31), false);
+
+  assert_eq!(bit_to_bool(1, 30), false);
+  assert_eq!(bit_to_bool(1, 31), true);
+
+  assert_eq!(bit_to_bool(0, 0), false);
+  assert_eq!(bit_to_bool(0, 31), false);
+}
+
+#[test]
+#[should_panic(expected = "index should smaller than 32")]
+fn bit_to_bool_panic_test() {
+  assert!(bit_to_bool(0, 32));
 }
