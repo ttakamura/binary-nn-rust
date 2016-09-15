@@ -15,15 +15,7 @@ impl BitVec {
 
   pub fn new_bool(vec: Vec<bool>) -> BitVec {
     let nbits = vec.len();
-    let mut int_vec: Vec<u32> = vec![];
-
-    for block in vec.chunks(U32_SIZE) {
-      let mut tmp: u32 = 0;
-      for i in 1..block.len() {
-        tmp = tmp | (1 << U32_SIZE - (i + 1))
-      }
-    }
-
+    let int_vec = bool_to_int_vec(vec);
     return BitVec {
       storage: int_vec,
       nbits: nbits,
@@ -46,6 +38,21 @@ impl BitVec {
 // }
 
 #[inline]
+fn bool_to_int_vec(vec: Vec<bool>) -> Vec<u32> {
+  let mut int_vec: Vec<u32> = vec![];
+  for block in vec.chunks(U32_SIZE) {
+    let mut tmp: u32 = 0;
+    for i in 0..block.len() {
+      if block[i] {
+        tmp = tmp | single_bit_int(i)
+      }
+    }
+    int_vec.push(tmp);
+  }
+  return int_vec;
+}
+
+#[inline]
 fn offset_of(index: usize) -> (usize, usize) {
   let w: usize = index / U32_SIZE;
   let b: usize = index % U32_SIZE;
@@ -57,10 +64,31 @@ fn bit_to_bool(x: u32, index: usize) -> bool {
   if index >= U32_SIZE {
     panic!("index should smaller than 32");
   }
-  (x & (1 << (U32_SIZE - (index + 1)))) != 0
+  (x & single_bit_int(index)) != 0
+}
+
+#[inline]
+fn single_bit_int(index: usize) -> u32 {
+  (1 << (U32_SIZE - (index + 1)))
 }
 
 // -------------------------------------------------------------------------------------------------
+#[test]
+fn bool_to_int_vec_test() {
+  assert_eq!(bool_to_int_vec(vec![true, false]), vec![1 << 31]);
+  assert_eq!(bool_to_int_vec(vec![true, true, true]), vec![7 << 29]);
+  assert_eq!(bool_to_int_vec(vec![false, false, true]), vec![1 << 29]);
+
+  let mut vec: Vec<bool> = vec![];
+  for i in 0..33 {
+    if i < 31 {
+      vec.push(false);
+    } else {
+      vec.push(true);
+    }
+  }
+  assert_eq!(bool_to_int_vec(vec), vec![1, 1 << 31]);
+}
 
 #[test]
 fn offset_of_test() {
