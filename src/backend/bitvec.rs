@@ -32,6 +32,7 @@ impl BitVec {
   }
 }
 
+
 // #[inline]
 // fn block_of(index: usize) -> usize {
 //  index / U32_SIZE
