@@ -13,7 +13,7 @@ impl BitVec {
     };
   }
 
-  pub fn new_bool(vec: Vec<bool>) -> BitVec {
+  pub fn from_bool(vec: Vec<bool>) -> BitVec {
     let nbits = vec.len();
     let int_vec = bool_to_int_vec(vec);
     return BitVec {
@@ -29,6 +29,10 @@ impl BitVec {
     let (w, b) = offset_of(i);
     let x = self.storage.get(w).unwrap();
     return Some(bit_to_bool(*x, b));
+  }
+
+  pub fn mut_union(&mut self, other: &BitVec) -> bool {
+    return true;
   }
 }
 

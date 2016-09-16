@@ -17,8 +17,8 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_new_bool() {
-    let x = BitVec::new_bool(vec![false, true, true, false]);
+  fn bitvec_from_bool() {
+    let x = BitVec::from_bool(vec![false, true, true, false]);
     assert_eq!(x.get(0), Some(false));
     assert_eq!(x.get(1), Some(true));
     assert_eq!(x.get(2), Some(true));
@@ -33,7 +33,7 @@ mod bitvec_tests {
         vec.push(true);
       }
     }
-    let x = BitVec::new_bool(vec);
+    let x = BitVec::from_bool(vec);
     assert_eq!(x.get(30), Some(false));
     assert_eq!(x.get(31), Some(true));
     assert_eq!(x.get(32), Some(true));
@@ -52,5 +52,38 @@ mod bitvec_tests {
     assert_eq!(x.get(31), Some(true));
     assert_eq!(x.get(32), Some(true));
     assert_eq!(x.get(33), None);
+  }
+
+  #[test]
+  fn bitvec_or() {
+    let mut tmp_x: Vec<bool> = vec![];
+    let mut tmp_y: Vec<bool> = vec![];
+    for _ in 0..31 {
+      tmp_x.push(false);
+      tmp_y.push(false);
+    }
+    // 31
+    tmp_x.push(true);
+    tmp_y.push(false);
+    // 32
+    tmp_x.push(false);
+    tmp_y.push(true);
+    // 33
+    tmp_x.push(false);
+    tmp_y.push(false);
+
+    let mut x = BitVec::from_bool(tmp_x);
+    let y = BitVec::from_bool(tmp_y);
+    x.mut_union(&y);
+
+    assert_eq!(x.get(0), Some(false));
+    assert_eq!(x.get(1), Some(false));
+    assert_eq!(x.get(2), Some(false));
+    assert_eq!(x.get(30), Some(false));
+    assert_eq!(x.get(31), Some(true));
+    assert_eq!(x.get(32), Some(true));
+    assert_eq!(x.get(33), Some(false));
+    assert_eq!(x.get(34), None);
+    assert_eq!(x.get(35), None);
   }
 }
