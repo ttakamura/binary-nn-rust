@@ -1,3 +1,4 @@
+
 const U32_SIZE: usize = 32;
 
 pub struct BitVec {
@@ -31,11 +32,25 @@ impl BitVec {
     return Some(bit_to_bool(*x, b));
   }
 
-  pub fn mut_union(&mut self, other: &BitVec) -> bool {
-    return true;
+  pub fn mut_union(&mut self, other: &BitVec) {
+    self.process(other, |a, b| a | b)
+  }
+
+  #[inline]
+  pub fn len(&self) -> usize {
+    self.nbits
+  }
+
+  #[inline]
+  fn process<F>(&mut self, other: &BitVec, mut op: F)
+    where F: FnMut(u32, u32) -> u32
+  {
+    assert_eq!(self.len(), other.len());
+    for (a, b) in self.storage.iter_mut().zip(other.storage.iter()) {
+      *a = op(*a, *b);
+    }
   }
 }
-
 
 // #[inline]
 // fn block_of(index: usize) -> usize {
@@ -77,7 +92,9 @@ fn single_bit_int(index: usize) -> u32 {
   (1 << (U32_SIZE - (index + 1)))
 }
 
+
 // -------------------------------------------------------------------------------------------------
+
 #[test]
 fn bool_to_int_vec_test() {
   assert_eq!(bool_to_int_vec(vec![true, false]), vec![1 << 31]);
@@ -128,3 +145,5 @@ fn bit_to_bool_test() {
 fn bit_to_bool_panic_test() {
   assert!(bit_to_bool(0, 32));
 }
+
+// -------------------------------------------------------------------------------------------------

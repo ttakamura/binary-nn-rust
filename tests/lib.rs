@@ -55,6 +55,16 @@ mod bitvec_tests {
   }
 
   #[test]
+  fn bitvec_len() {
+    let mut tmp_x: Vec<bool> = vec![];
+    for _ in 0..34 {
+      tmp_x.push(false);
+    }
+    let x = BitVec::from_bool(tmp_x);
+    assert_eq!(x.len(), 34);
+  }
+
+  #[test]
   fn bitvec_or() {
     let mut tmp_x: Vec<bool> = vec![];
     let mut tmp_y: Vec<bool> = vec![];
