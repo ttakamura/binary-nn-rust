@@ -1,4 +1,3 @@
-
 const U32_SIZE: usize = 32;
 
 pub struct BitVec {
