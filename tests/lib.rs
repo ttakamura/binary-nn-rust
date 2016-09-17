@@ -93,24 +93,40 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_or() {
+  fn bitvec_union() {
     let mut x = BitVec::falses(34);
     let mut y = BitVec::falses(34);
     x.set_true(30);
-    y.set_true(30);
     x.set_true(31);
+    y.set_true(31);
     y.set_true(32);
 
     x.mut_union(&y);
 
     assert_eq!(x.get(0), Some(false));
-    assert_eq!(x.get(1), Some(false));
-    assert_eq!(x.get(2), Some(false));
     assert_eq!(x.get(30), Some(true));
     assert_eq!(x.get(31), Some(true));
     assert_eq!(x.get(32), Some(true));
     assert_eq!(x.get(33), Some(false));
     assert_eq!(x.get(34), None);
-    assert_eq!(x.get(35), None);
+  }
+
+  #[test]
+  fn bitvec_intersect() {
+    let mut x = BitVec::falses(34);
+    let mut y = BitVec::falses(34);
+    x.set_true(30);
+    x.set_true(31);
+    y.set_true(31);
+    y.set_true(32);
+
+    x.mut_intersect(&y);
+
+    assert_eq!(x.get(0), Some(false));
+    assert_eq!(x.get(30), Some(false));
+    assert_eq!(x.get(31), Some(true));
+    assert_eq!(x.get(32), Some(false));
+    assert_eq!(x.get(33), Some(false));
+    assert_eq!(x.get(34), None);
   }
 }

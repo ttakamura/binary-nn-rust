@@ -56,6 +56,10 @@ impl BitVec {
     self.process(other, |a, b| a | b)
   }
 
+  pub fn mut_intersect(&mut self, other: &BitVec) {
+    self.process(other, |a, b| a & b)
+  }
+
   #[inline]
   pub fn len(&self) -> usize {
     self.nbits
