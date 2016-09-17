@@ -55,6 +55,23 @@ mod bitvec_tests {
   }
 
   #[test]
+  fn bitvec_set() {
+    let mut x = BitVec::falses(33);
+    assert_eq!(x.get(32), Some(false));
+    x.set_true(32);
+    assert_eq!(x.get(32), Some(true));
+    x.set_false(32);
+    assert_eq!(x.get(32), Some(false));
+  }
+
+  #[test]
+  #[should_panic(expected = "index should smaller than self.nbits")]
+  fn bitvec_set_overflow() {
+    let mut x = BitVec::falses(33);
+    x.set_true(33);
+  }
+
+  #[test]
   fn bitvec_len() {
     let mut tmp_x: Vec<bool> = vec![];
     for _ in 0..34 {
@@ -65,31 +82,31 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_or() {
-    let mut tmp_x: Vec<bool> = vec![];
-    let mut tmp_y: Vec<bool> = vec![];
-    for _ in 0..31 {
-      tmp_x.push(false);
-      tmp_y.push(false);
-    }
-    // 31
-    tmp_x.push(true);
-    tmp_y.push(false);
-    // 32
-    tmp_x.push(false);
-    tmp_y.push(true);
-    // 33
-    tmp_x.push(false);
-    tmp_y.push(false);
+  fn bitvec_falses() {
+    let x = BitVec::falses(33);
+    assert_eq!(x.get(0), Some(false));
+    assert_eq!(x.get(1), Some(false));
+    assert_eq!(x.get(31), Some(false));
+    assert_eq!(x.get(32), Some(false));
+    assert_eq!(x.get(33), None);
+    assert_eq!(x.get(34), None);
+  }
 
-    let mut x = BitVec::from_bool(tmp_x);
-    let y = BitVec::from_bool(tmp_y);
+  #[test]
+  fn bitvec_or() {
+    let mut x = BitVec::falses(34);
+    let mut y = BitVec::falses(34);
+    x.set_true(30);
+    y.set_true(30);
+    x.set_true(31);
+    y.set_true(32);
+
     x.mut_union(&y);
 
     assert_eq!(x.get(0), Some(false));
     assert_eq!(x.get(1), Some(false));
     assert_eq!(x.get(2), Some(false));
-    assert_eq!(x.get(30), Some(false));
+    assert_eq!(x.get(30), Some(true));
     assert_eq!(x.get(31), Some(true));
     assert_eq!(x.get(32), Some(true));
     assert_eq!(x.get(33), Some(false));

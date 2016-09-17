@@ -22,13 +22,34 @@ impl BitVec {
     };
   }
 
-  pub fn get(&self, i: usize) -> Option<bool> {
-    if i >= self.nbits {
+  pub fn falses(nbits: usize) -> BitVec {
+    let tmp: Vec<bool> = vec![false; nbits];
+    return BitVec::from_bool(tmp);
+  }
+
+  pub fn get(&self, index: usize) -> Option<bool> {
+    if index >= self.nbits {
       return None;
     }
-    let (w, b) = offset_of(i);
-    let x = self.storage.get(w).unwrap();
-    return Some(bit_to_bool(*x, b));
+    let (w, b) = offset_of(index);
+    let x = self.storage[w];
+    return Some(bit_to_bool(x, b));
+  }
+
+  pub fn set_true(&mut self, index: usize) {
+    if index >= self.nbits {
+      panic!("index should smaller than self.nbits")
+    }
+    let (w, b) = offset_of(index);
+    self.storage[w] |= single_bit_int(b);
+  }
+
+  pub fn set_false(&mut self, index: usize) {
+    if index >= self.nbits {
+      panic!("index should smaller than self.nbits")
+    }
+    let (w, b) = offset_of(index);
+    self.storage[w] &= !(single_bit_int(b));
   }
 
   pub fn mut_union(&mut self, other: &BitVec) {
