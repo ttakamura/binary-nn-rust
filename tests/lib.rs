@@ -129,4 +129,23 @@ mod bitvec_tests {
     assert_eq!(x.get(33), Some(false));
     assert_eq!(x.get(34), None);
   }
+
+  #[test]
+  fn bitvec_xor() {
+    let mut x = BitVec::falses(34);
+    let mut y = BitVec::falses(34);
+    x.set_true(30);
+    x.set_true(31);
+    y.set_true(31);
+    y.set_true(32);
+
+    x.mut_xor(&y);
+
+    assert_eq!(x.get(0), Some(false));
+    assert_eq!(x.get(30), Some(true));
+    assert_eq!(x.get(31), Some(false));
+    assert_eq!(x.get(32), Some(true));
+    assert_eq!(x.get(33), Some(false));
+    assert_eq!(x.get(34), None);
+  }
 }
