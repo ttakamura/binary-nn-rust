@@ -10,14 +10,39 @@ pub trait BitMatrix {
   type Index;
   fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self where Self: Sized;
   fn falses(nbits: Self::Index) -> Self where Self: Sized;
-  fn get(&self, index: Self::Index) -> bool;
-  fn set_true(&mut self, index: Self::Index);
-  fn set_false(&mut self, index: Self::Index);
+
+  fn get(&self, index: Self::Index) -> bool {
+    let (w, b) = self.offset_of(index);
+    return self.get_block(w).get(b);
+  }
+
+  fn set_true(&mut self, index: Self::Index) {
+    let (w, b) = self.offset_of(index);
+    return self.get_mut_block(w).set_true(b);
+  }
+
+  fn set_false(&mut self, index: Self::Index) {
+    let (w, b) = self.offset_of(index);
+    return self.get_mut_block(w).set_false(b);
+  }
+
+  fn mut_union(&mut self, other: &Self) {
+    self.process(other, |a, b| a.mut_union(b))
+  }
+
+  fn mut_intersect(&mut self, other: &Self) {
+    self.process(other, |a, b| a.mut_intersect(b))
+  }
+
+  fn mut_xor(&mut self, other: &Self) {
+    self.process(other, |a, b| a.mut_xor(b))
+  }
+
   fn len(&self) -> Self::Index;
-  fn mut_union(&mut self, other: &Self) where Self: Sized;
-  fn mut_intersect(&mut self, other: &Self) where Self: Sized;
-  fn mut_xor(&mut self, other: &Self) where Self: Sized;
   fn process<F>(&mut self, other: &Self, mut op: F) where F: FnMut(&mut Bitpack32, &Bitpack32);
+  fn offset_of(&self, index: Self::Index) -> (usize, usize);
+  fn get_block(&self, index: usize) -> &Bitpack32;
+  fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32;
 }
 
 impl BitMatrix for BitMatrix2 {
@@ -40,39 +65,11 @@ impl BitMatrix for BitMatrix2 {
     return BitMatrix2::new(vec, nbits);
   }
 
-  fn get(&self, index: Self::Index) -> bool {
-    let (w, b) = self.offset_of(index);
-    return self.storage[w].get(b);
-  }
-
-  fn set_true(&mut self, index: Self::Index) {
-    let (w, b) = self.offset_of(index);
-    return self.storage[w].set_true(b);
-  }
-
-  fn set_false(&mut self, index: Self::Index) {
-    let (w, b) = self.offset_of(index);
-    return self.storage[w].set_false(b);
-  }
-
-  fn mut_union(&mut self, other: &Self) {
-    self.process(other, |a, b| a.mut_union(b))
-  }
-
-  fn mut_intersect(&mut self, other: &Self) {
-    self.process(other, |a, b| a.mut_intersect(b))
-  }
-
-  fn mut_xor(&mut self, other: &Self) {
-    self.process(other, |a, b| a.mut_xor(b))
-  }
-
   #[inline]
   fn len(&self) -> Self::Index {
     self.nbits
   }
 
-  #[inline]
   fn process<F>(&mut self, other: &Self, mut op: F)
     where F: FnMut(&mut Bitpack32, &Bitpack32)
   {
@@ -81,11 +78,8 @@ impl BitMatrix for BitMatrix2 {
       op(a, b);
     }
   }
-}
 
-impl BitMatrix2 {
-  #[inline]
-  fn offset_of(&self, index: (usize, usize)) -> (usize, usize) {
+  fn offset_of(&self, index: Self::Index) -> (usize, usize) {
     let (nrow, ncol) = self.nbits;
     let (irow, icol) = index;
     if irow >= nrow || icol >= ncol {
@@ -96,6 +90,18 @@ impl BitMatrix2 {
     return (w, b);
   }
 
+  #[inline]
+  fn get_block(&self, index: usize) -> &Bitpack32 {
+    &self.storage[index]
+  }
+
+  #[inline]
+  fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32 {
+    &mut self.storage[index]
+  }
+}
+
+impl BitMatrix2 {
   #[inline]
   fn block_per_row(&self) -> usize {
     let (_, ncol) = self.nbits;
