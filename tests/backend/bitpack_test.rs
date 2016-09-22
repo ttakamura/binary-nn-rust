@@ -95,7 +95,7 @@ mod bitpack_tests {
   }
 
   #[test]
-  fn bitvec_xor() {
+  fn bitpack_xor() {
     let mut x = Bitpack32::falses();
     let mut y = Bitpack32::falses();
     x.set_true(29);
@@ -108,5 +108,4 @@ mod bitpack_tests {
     assert_eq!(x.get(30), Some(false));
     assert_eq!(x.get(31), Some(true));
   }
-
 }

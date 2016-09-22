@@ -3,63 +3,63 @@ struct Bitpack32 {
 }
 
 trait Bitpack {
-  pub fn limit_index(&self) -> usize;
-  pub fn from_bool(vec: Vec<bool>) -> Bitpack;
-  pub fn falses() -> Bitpack;
-  pub fn get(&self, index: usize) -> Option<bool>;
-  pub fn set_true(&mut self, index: usize);
-  pub fn set_false(&mut self, index: usize);
-  pub fn mut_union(&mut self, other: &Bitpack);
-  pub fn mut_intersect(&mut self, other: &Bitpack);
-  pub fn mut_xor(&mut self, other: &Bitpack);
+  fn limit_index() -> usize where Self: Sized;
+  fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
+  fn falses() -> Self where Self: Sized;
+  fn get(&self, index: usize) -> Option<bool>;
+  fn set_true(&mut self, index: usize);
+  fn set_false(&mut self, index: usize);
+  fn mut_union(&mut self, other: &Self);
+  fn mut_intersect(&mut self, other: &Self);
+  fn mut_xor(&mut self, other: &Self);
 }
 
 impl Bitpack for Bitpack32 {
   #[inline]
-  pub fn limit_index() -> usize {
+  fn limit_index() -> usize {
     32
   }
 
-  pub fn from_bool(vec: Vec<bool>) -> Bitpack32 {
+  fn from_bool(vec: Vec<bool>) -> Bitpack32 {
     let val = bool_to_int(vec);
-    return Bitpack32{ storage: val };
+    return Bitpack32 { storage: val };
   }
 
-  pub fn falses() -> Bitpack32 {
+  fn falses() -> Bitpack32 {
     let tmp: Vec<bool> = vec![false; Bitpack32::limit_index()];
     return Bitpack32::from_bool(tmp);
   }
 
-  pub fn get(&self, index: usize) -> Option<bool> {
+  fn get(&self, index: usize) -> Option<bool> {
     if index >= Bitpack32::limit_index() {
-      panic!("index should smaller than limit_index")
+      panic!("index should smaller than limit_index");
     }
     return Some(bit_to_bool(self.storage, index));
   }
 
-  pub fn set_true(&mut self, index: usize) {
+  fn set_true(&mut self, index: usize) {
     if index >= Bitpack32::limit_index() {
-      panic!("index should smaller than limit_index")
+      panic!("index should smaller than limit_index");
     }
     self.storage |= single_bit_int(index);
   }
 
-  pub fn set_false(&mut self, index: usize) {
+  fn set_false(&mut self, index: usize) {
     if index >= Bitpack32::limit_index() {
-      panic!("index should smaller than limit_index")
+      panic!("index should smaller than limi index");
     }
     self.storage &= !(single_bit_int(index));
   }
 
-  pub fn mut_union(&mut self, other: &Bitpack32) {
+  fn mut_union(&mut self, other: &Bitpack32) {
     self.storage = self.storage | other.storage;
   }
 
-  pub fn mut_intersect(&mut self, other: &Bitpack32) {
+  fn mut_intersect(&mut self, other: &Bitpack32) {
     self.storage = self.storage & other.storage;
   }
 
-  pub fn mut_xor(&mut self, other: &Bitpack32) {
+  fn mut_xor(&mut self, other: &Bitpack32) {
     self.storage = self.storage ^ other.storage;
   }
 }
