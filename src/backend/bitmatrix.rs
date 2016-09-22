@@ -1,44 +1,56 @@
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 
-pub struct BitMatrix {
+pub struct BitMatrix2 {
   storage: Vec<Bitpack32>,
   nbits: (usize, usize), // (row, col)
 }
 
-impl BitMatrix {
-  pub fn new(vec: Vec<Bitpack32>, nbits: (usize, usize)) -> BitMatrix {
-    return BitMatrix {
+pub trait BitMatrix {
+  type Index;
+  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self where Self: Sized;
+  fn falses(nbits: Self::Index) -> Self where Self: Sized;
+  fn get(&self, index: Self::Index) -> bool;
+  fn set_true(&mut self, index: Self::Index);
+  fn set_false(&mut self, index: Self::Index);
+  fn len(&self) -> Self::Index;
+}
+
+impl BitMatrix for BitMatrix2 {
+  type Index = (usize, usize);
+
+  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> BitMatrix2 {
+    return BitMatrix2 {
       storage: vec,
       nbits: nbits,
     };
   }
 
-  pub fn falses(nbits: (usize, usize)) -> BitMatrix {
+  fn falses(nbits: Self::Index) -> BitMatrix2 {
     let (nrow, ncol) = nbits;
-    let block_num = (nrow * ncol) / Bitpack32::limit_index() + 1;
+    let block_num = nrow * BitMatrix2::block_per_row_of(ncol);
     let mut vec: Vec<Bitpack32> = vec![];
     for _ in 0..block_num {
       vec.push(Bitpack32::falses());
     }
-    return BitMatrix::new(vec, nbits);
+    return BitMatrix2::new(vec, nbits);
   }
 
-  pub fn get(&self, index: (usize, usize)) -> bool {
+  fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
     return self.storage[w].get(b);
   }
 
-  // pub fn set_true(&mut self, index: usize) {
-  //   let (w, b) = self.offset_of(index);
-  //   return self.storage[w].set_true(b);
-  // }
-  //
-  // pub fn set_false(&mut self, index: usize) {
-  //   let (w, b) = self.offset_of(index);
-  //   return self.storage[w].set_false(b);
-  // }
-  //
+  fn set_true(&mut self, index: Self::Index) {
+    let (w, b) = self.offset_of(index);
+    return self.storage[w].set_true(b);
+  }
+
+  fn set_false(&mut self, index: Self::Index) {
+    let (w, b) = self.offset_of(index);
+    return self.storage[w].set_false(b);
+  }
+
   // pub fn mut_union(&mut self, other: &BitVec) {
   //   self.process(other, |a, b| a.mut_union(b))
   // }
@@ -50,12 +62,12 @@ impl BitMatrix {
   // pub fn mut_xor(&mut self, other: &BitVec) {
   //   self.process(other, |a, b| a.mut_xor(b))
   // }
-  //
-  // #[inline]
-  // pub fn len(&self) -> usize {
-  //   self.nbits
-  // }
-  //
+
+  #[inline]
+  fn len(&self) -> Self::Index {
+    self.nbits
+  }
+
   // #[inline]
   // fn process<F>(&mut self, other: &BitVec, mut op: F)
   //   where F: FnMut(&mut Bitpack32, &Bitpack32)
@@ -65,7 +77,9 @@ impl BitMatrix {
   //     op(a, b);
   //   }
   // }
+}
 
+impl BitMatrix2 {
   #[inline]
   fn offset_of(&self, index: (usize, usize)) -> (usize, usize) {
     let (nrow, ncol) = self.nbits;
@@ -81,20 +95,48 @@ impl BitMatrix {
   #[inline]
   fn block_per_row(&self) -> usize {
     let (_, ncol) = self.nbits;
+    return BitMatrix2::block_per_row_of(ncol);
+  }
+
+  #[inline]
+  fn block_per_row_of(ncol: usize) -> usize {
     return ncol / Bitpack32::limit_index() + 1;
   }
 }
 
+
 // -------------------------------------------------------------------------------------------------
 #[test]
 fn offset_of_test() {
-  let x = BitMatrix::falses((3, 35));
+  let x = BitMatrix2::falses((3, 40));
+
   assert_eq!(x.offset_of((0, 0)), (0, 0));
   assert_eq!(x.offset_of((0, 10)), (0, 10));
-  assert_eq!(x.offset_of((0, 32 + 1)), (1, 1));
-  assert_eq!(x.offset_of((0, 32 + 2)), (1, 2));
+  assert_eq!(x.offset_of((0, 31)), (0, 31));
+
+  assert_eq!(x.offset_of((0, 32 + 0)), (1, 0));
+  assert_eq!(x.offset_of((0, 32 + 7)), (1, 7));
+
+  assert_eq!(x.offset_of((1, 0)), (2, 0));
   assert_eq!(x.offset_of((1, 5)), (2, 5));
-  assert_eq!(x.offset_of((1, 32 + 2)), (3, 2));
+  assert_eq!(x.offset_of((1, 31)), (2, 31));
+
+  assert_eq!(x.offset_of((1, 32 + 0)), (3, 0));
+  assert_eq!(x.offset_of((1, 32 + 7)), (3, 7));
+
+  assert_eq!(x.offset_of((2, 0)), (4, 0));
   assert_eq!(x.offset_of((2, 5)), (4, 5));
-  assert_eq!(x.offset_of((2, 32 + 2)), (5, 2));
+  assert_eq!(x.offset_of((2, 31)), (4, 31));
+
+  assert_eq!(x.offset_of((2, 32 + 0)), (5, 0));
+  assert_eq!(x.offset_of((2, 32 + 7)), (5, 7));
+}
+
+#[test]
+fn bitmatrix_from_falses() {
+  let x = BitMatrix2::falses((3, 40));
+  assert_eq!(x.storage.len(), 6);
+  assert_eq!(x.get((0, 0)), false);
+  assert_eq!(x.get((1, 20)), false);
+  assert_eq!(x.get((2, 39)), false);
 }

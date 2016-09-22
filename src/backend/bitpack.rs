@@ -3,7 +3,7 @@ pub struct Bitpack32 {
 }
 
 pub trait Bitpack {
-  fn limit_index() -> usize where Self: Sized;
+  fn limit_index() -> usize;
   fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
   fn falses() -> Self where Self: Sized;
   fn get(&self, index: usize) -> bool;
