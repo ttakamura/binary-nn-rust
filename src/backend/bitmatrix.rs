@@ -17,6 +17,7 @@ pub trait BitMatrix {
   fn mut_union(&mut self, other: &Self) where Self: Sized;
   fn mut_intersect(&mut self, other: &Self) where Self: Sized;
   fn mut_xor(&mut self, other: &Self) where Self: Sized;
+  fn process<F>(&mut self, other: &Self, mut op: F) where F: FnMut(&mut Bitpack32, &Bitpack32);
 }
 
 impl BitMatrix for BitMatrix2 {
@@ -70,9 +71,7 @@ impl BitMatrix for BitMatrix2 {
   fn len(&self) -> Self::Index {
     self.nbits
   }
-}
 
-impl BitMatrix2 {
   #[inline]
   fn process<F>(&mut self, other: &Self, mut op: F)
     where F: FnMut(&mut Bitpack32, &Bitpack32)
@@ -82,7 +81,9 @@ impl BitMatrix2 {
       op(a, b);
     }
   }
+}
 
+impl BitMatrix2 {
   #[inline]
   fn offset_of(&self, index: (usize, usize)) -> (usize, usize) {
     let (nrow, ncol) = self.nbits;
