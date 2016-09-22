@@ -1,3 +1,4 @@
+use std::cmp::PartialEq;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 
@@ -7,7 +8,8 @@ pub struct BitMatrix2 {
 }
 
 pub trait BitMatrix {
-  type Index;
+  type Index: PartialEq;
+
   fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self where Self: Sized;
   fn falses(nbits: Self::Index) -> Self where Self: Sized;
 
@@ -38,9 +40,21 @@ pub trait BitMatrix {
     self.process(other, |a, b| a.mut_xor(b))
   }
 
+  fn process<F>(&mut self, other: &Self, mut op: F)
+    where F: FnMut(&mut Bitpack32, &Bitpack32)
+  {
+    if self.len() != other.len() {
+      panic!("self.len should be the same as other.len()");
+    }
+    for (a, b) in self.get_mut_storage().iter_mut().zip(other.get_storage().iter()) {
+      op(a, b);
+    }
+  }
+
   fn len(&self) -> Self::Index;
-  fn process<F>(&mut self, other: &Self, mut op: F) where F: FnMut(&mut Bitpack32, &Bitpack32);
   fn offset_of(&self, index: Self::Index) -> (usize, usize);
+  fn get_storage(&self) -> &Vec<Bitpack32>;
+  fn get_mut_storage(&mut self) -> &mut Vec<Bitpack32>;
   fn get_block(&self, index: usize) -> &Bitpack32;
   fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32;
 }
@@ -65,20 +79,6 @@ impl BitMatrix for BitMatrix2 {
     return BitMatrix2::new(vec, nbits);
   }
 
-  #[inline]
-  fn len(&self) -> Self::Index {
-    self.nbits
-  }
-
-  fn process<F>(&mut self, other: &Self, mut op: F)
-    where F: FnMut(&mut Bitpack32, &Bitpack32)
-  {
-    assert_eq!(self.len(), other.len());
-    for (a, b) in self.storage.iter_mut().zip(other.storage.iter()) {
-      op(a, b);
-    }
-  }
-
   fn offset_of(&self, index: Self::Index) -> (usize, usize) {
     let (nrow, ncol) = self.nbits;
     let (irow, icol) = index;
@@ -88,6 +88,21 @@ impl BitMatrix for BitMatrix2 {
     let w: usize = (irow * self.block_per_row()) + icol / Bitpack32::limit_index();
     let b: usize = icol % Bitpack32::limit_index();
     return (w, b);
+  }
+
+  #[inline]
+  fn len(&self) -> Self::Index {
+    self.nbits
+  }
+
+  #[inline]
+  fn get_storage(&self) -> &Vec<Bitpack32> {
+    &self.storage
+  }
+
+  #[inline]
+  fn get_mut_storage(&mut self) -> &mut Vec<Bitpack32> {
+    &mut self.storage
   }
 
   #[inline]
