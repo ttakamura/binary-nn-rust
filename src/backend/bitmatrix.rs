@@ -14,19 +14,22 @@ pub trait BitMatrix {
   fn set_true(&mut self, index: Self::Index);
   fn set_false(&mut self, index: Self::Index);
   fn len(&self) -> Self::Index;
+  fn mut_union(&mut self, other: &Self) where Self: Sized;
+  fn mut_intersect(&mut self, other: &Self) where Self: Sized;
+  fn mut_xor(&mut self, other: &Self) where Self: Sized;
 }
 
 impl BitMatrix for BitMatrix2 {
   type Index = (usize, usize);
 
-  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> BitMatrix2 {
+  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self {
     return BitMatrix2 {
       storage: vec,
       nbits: nbits,
     };
   }
 
-  fn falses(nbits: Self::Index) -> BitMatrix2 {
+  fn falses(nbits: Self::Index) -> Self {
     let (nrow, ncol) = nbits;
     let block_num = nrow * BitMatrix2::block_per_row_of(ncol);
     let mut vec: Vec<Bitpack32> = vec![];
@@ -51,35 +54,35 @@ impl BitMatrix for BitMatrix2 {
     return self.storage[w].set_false(b);
   }
 
-  // pub fn mut_union(&mut self, other: &BitVec) {
-  //   self.process(other, |a, b| a.mut_union(b))
-  // }
-  //
-  // pub fn mut_intersect(&mut self, other: &BitVec) {
-  //   self.process(other, |a, b| a.mut_intersect(b))
-  // }
-  //
-  // pub fn mut_xor(&mut self, other: &BitVec) {
-  //   self.process(other, |a, b| a.mut_xor(b))
-  // }
+  fn mut_union(&mut self, other: &Self) {
+    self.process(other, |a, b| a.mut_union(b))
+  }
+
+  fn mut_intersect(&mut self, other: &Self) {
+    self.process(other, |a, b| a.mut_intersect(b))
+  }
+
+  fn mut_xor(&mut self, other: &Self) {
+    self.process(other, |a, b| a.mut_xor(b))
+  }
 
   #[inline]
   fn len(&self) -> Self::Index {
     self.nbits
   }
-
-  // #[inline]
-  // fn process<F>(&mut self, other: &BitVec, mut op: F)
-  //   where F: FnMut(&mut Bitpack32, &Bitpack32)
-  // {
-  //   assert_eq!(self.len(), other.len());
-  //   for (a, b) in self.storage.iter_mut().zip(other.storage.iter()) {
-  //     op(a, b);
-  //   }
-  // }
 }
 
 impl BitMatrix2 {
+  #[inline]
+  fn process<F>(&mut self, other: &Self, mut op: F)
+    where F: FnMut(&mut Bitpack32, &Bitpack32)
+  {
+    assert_eq!(self.len(), other.len());
+    for (a, b) in self.storage.iter_mut().zip(other.storage.iter()) {
+      op(a, b);
+    }
+  }
+
   #[inline]
   fn offset_of(&self, index: (usize, usize)) -> (usize, usize) {
     let (nrow, ncol) = self.nbits;
