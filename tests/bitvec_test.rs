@@ -1,5 +1,4 @@
 extern crate binary_nn;
-use binary_nn::*;
 
 mod bitvec_tests {
   use binary_nn::backend::bitvec::*;

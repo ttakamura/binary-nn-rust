@@ -1,17 +1,23 @@
-struct Bitpack32 {
+pub struct Bitpack32 {
   storage: u32,
 }
 
-trait Bitpack {
+pub trait Bitpack {
   fn limit_index() -> usize where Self: Sized;
   fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
   fn falses() -> Self where Self: Sized;
-  fn get(&self, index: usize) -> Option<bool>;
+  fn get(&self, index: usize) -> bool;
   fn set_true(&mut self, index: usize);
   fn set_false(&mut self, index: usize);
   fn mut_union(&mut self, other: &Self);
   fn mut_intersect(&mut self, other: &Self);
   fn mut_xor(&mut self, other: &Self);
+}
+
+impl Bitpack32 {
+  pub fn new(val: u32) -> Bitpack32 {
+    Bitpack32 { storage: val }
+  }
 }
 
 impl Bitpack for Bitpack32 {
@@ -30,11 +36,11 @@ impl Bitpack for Bitpack32 {
     return Bitpack32::from_bool(tmp);
   }
 
-  fn get(&self, index: usize) -> Option<bool> {
+  fn get(&self, index: usize) -> bool {
     if index >= Bitpack32::limit_index() {
       panic!("index should smaller than limit_index");
     }
-    return Some(bit_to_bool(self.storage, index));
+    return bit_to_bool(self.storage, index);
   }
 
   fn set_true(&mut self, index: usize) {
@@ -67,7 +73,7 @@ impl Bitpack for Bitpack32 {
 #[inline]
 fn bool_to_int(vec: Vec<bool>) -> u32 {
   let mut tmp: u32 = 0;
-  for i in 0..Bitpack32::limit_index() {
+  for i in 0..vec.len() {
     if vec[i] {
       tmp = tmp | single_bit_int(i)
     }
@@ -85,6 +91,9 @@ fn bit_to_bool(x: u32, index: usize) -> bool {
 
 #[inline]
 fn single_bit_int(index: usize) -> u32 {
+  if index >= Bitpack32::limit_index() {
+    panic!("index should smaller than 32");
+  }
   (1 << (Bitpack32::limit_index() - (index + 1)))
 }
 
