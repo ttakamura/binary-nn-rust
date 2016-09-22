@@ -18,6 +18,13 @@ impl Bitpack32 {
   pub fn new(val: u32) -> Bitpack32 {
     Bitpack32 { storage: val }
   }
+
+  #[inline]
+  fn check_index(index: usize) {
+    if index >= Bitpack32::limit_index() {
+      panic!("index should smaller than limit_index");
+    }
+  }
 }
 
 impl Bitpack for Bitpack32 {
@@ -37,23 +44,14 @@ impl Bitpack for Bitpack32 {
   }
 
   fn get(&self, index: usize) -> bool {
-    if index >= Bitpack32::limit_index() {
-      panic!("index should smaller than limit_index");
-    }
     return bit_to_bool(self.storage, index);
   }
 
   fn set_true(&mut self, index: usize) {
-    if index >= Bitpack32::limit_index() {
-      panic!("index should smaller than limit_index");
-    }
     self.storage |= single_bit_int(index);
   }
 
   fn set_false(&mut self, index: usize) {
-    if index >= Bitpack32::limit_index() {
-      panic!("index should smaller than limi index");
-    }
     self.storage &= !(single_bit_int(index));
   }
 
@@ -83,17 +81,13 @@ fn bool_to_int(vec: Vec<bool>) -> u32 {
 
 #[inline]
 fn bit_to_bool(x: u32, index: usize) -> bool {
-  if index >= Bitpack32::limit_index() {
-    panic!("index should smaller than 32");
-  }
+  Bitpack32::check_index(index);
   (x & single_bit_int(index)) != 0
 }
 
 #[inline]
 fn single_bit_int(index: usize) -> u32 {
-  if index >= Bitpack32::limit_index() {
-    panic!("index should smaller than 32");
-  }
+  Bitpack32::check_index(index);
   (1 << (Bitpack32::limit_index() - (index + 1)))
 }
 
@@ -123,7 +117,7 @@ fn bit_to_bool_test() {
 }
 
 #[test]
-#[should_panic(expected = "index should smaller than 32")]
+#[should_panic(expected = "index should smaller than limit_index")]
 fn bit_to_bool_panic_test() {
   assert!(bit_to_bool(0, 32));
 }
