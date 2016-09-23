@@ -1,6 +1,7 @@
 use std::cmp::PartialEq;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
+use backend::bitvec::BitVec;
 
 pub struct BitMatrix2 {
   storage: Vec<Bitpack32>,
@@ -9,9 +10,6 @@ pub struct BitMatrix2 {
 
 pub trait BitMatrix {
   type Index: PartialEq;
-
-  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self where Self: Sized;
-  fn falses(nbits: Self::Index) -> Self where Self: Sized;
 
   fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
@@ -51,6 +49,8 @@ pub trait BitMatrix {
     }
   }
 
+  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self where Self: Sized;
+  fn falses(nbits: Self::Index) -> Self where Self: Sized;
   fn len(&self) -> Self::Index;
   fn offset_of(&self, index: Self::Index) -> (usize, usize);
   fn get_storage(&self) -> &Vec<Bitpack32>;
@@ -117,6 +117,15 @@ impl BitMatrix for BitMatrix2 {
 }
 
 impl BitMatrix2 {
+  pub fn row(&self, index: usize) -> &BitVec {
+    let (_, ncol) = self.nbits;
+    let s = index * self.block_per_row();
+    let e = s + self.block_per_row();
+    let v = self.storage[s..e].to_vec();
+    let bv = BitVec::new(v, ncol);
+    return &bv;
+  }
+
   #[inline]
   fn block_per_row(&self) -> usize {
     let (_, ncol) = self.nbits;

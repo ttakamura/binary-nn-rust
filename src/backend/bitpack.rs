@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy)]
 pub struct Bitpack32 {
   storage: u32,
 }

@@ -56,4 +56,6 @@ mod bitmatrix_tests {
     assert_eq!(x.get((1, 32)), true);
     assert_eq!(x.get((1, 33)), false);
   }
+
+
 }
