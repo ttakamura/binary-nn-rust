@@ -52,7 +52,6 @@ pub trait BitMatrix {
     }
   }
 
-  fn falses(nbits: Self::Index) -> Self where Self: Sized;
   fn offset_of(&self, index: Self::Index) -> (usize, usize);
   fn len(&self) -> Self::Index;
   fn get_iter(&self) -> Iter<Bitpack32>;
@@ -63,16 +62,6 @@ pub trait BitMatrix {
 
 impl BitMatrix for BitMatrix2 {
   type Index = (usize, usize);
-
-  fn falses(nbits: Self::Index) -> Self {
-    let (nrow, ncol) = nbits;
-    let block_num = nrow * BitMatrix2::block_per_row_of(ncol);
-    let mut vec: Vec<Bitpack32> = vec![];
-    for _ in 0..block_num {
-      vec.push(Bitpack32::falses());
-    }
-    return BitMatrix2::new(vec, nbits);
-  }
 
   fn offset_of(&self, index: Self::Index) -> (usize, usize) {
     let (nrow, ncol) = self.nbits;
@@ -121,11 +110,21 @@ impl BitMatrix for BitMatrix2 {
 }
 
 impl BitMatrix2 {
-  fn new(vec: Vec<Bitpack32>, nbits: <BitMatrix2 as BitMatrix>::Index) -> Self {
+  pub fn new(vec: Vec<Bitpack32>, nbits: <BitMatrix2 as BitMatrix>::Index) -> Self {
     return BitMatrix2 {
       storage: vec,
       nbits: nbits,
     };
+  }
+
+  pub fn falses(nbits: <BitMatrix2 as BitMatrix>::Index) -> Self {
+    let (nrow, ncol) = nbits;
+    let block_num = nrow * BitMatrix2::block_per_row_of(ncol);
+    let mut vec: Vec<Bitpack32> = vec![];
+    for _ in 0..block_num {
+      vec.push(Bitpack32::falses());
+    }
+    return BitMatrix2::new(vec, nbits);
   }
 
   // pub fn row(&self, irow: usize) -> BitVec {

@@ -3,6 +3,7 @@ extern crate binary_nn;
 mod bitvec_tests {
   use binary_nn::backend::bitvec::*;
   use binary_nn::backend::bitpack::Bitpack32;
+  use binary_nn::backend::bitmatrix::*;
 
   #[test]
   fn bitvec_new() {
