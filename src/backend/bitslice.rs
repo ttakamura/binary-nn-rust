@@ -3,15 +3,14 @@ use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix::BitMatrix;
-use backend::bitslice::BitSlice;
 
 #[derive(Debug)]
-pub struct BitVec {
-  storage: Vec<Bitpack32>,
+pub struct BitSlice<'a> {
+  storage: &'a mut [Bitpack32],
   nbits: usize,
 }
 
-impl BitMatrix for BitVec {
+impl<'a> BitMatrix for BitSlice<'a> {
   type Index = usize;
 
   #[inline]
@@ -50,33 +49,19 @@ impl BitMatrix for BitVec {
   }
 }
 
-impl BitVec {
-  pub fn new(vec: Vec<Bitpack32>, nbits: usize) -> BitVec {
-    return BitVec {
-      storage: vec,
+impl<'a> BitSlice<'a> {
+  pub fn new(slice: &mut [Bitpack32], nbits: usize) -> BitSlice {
+    return BitSlice {
+      storage: slice,
       nbits: nbits,
     };
   }
-
-  pub fn falses(nbits: <BitVec as BitMatrix>::Index) -> Self {
-    let block_num = nbits / Bitpack32::limit_index() + 1;
-    let mut vec: Vec<Bitpack32> = vec![];
-    for _ in 0..block_num {
-      vec.push(Bitpack32::falses());
-    }
-    return BitVec::new(vec, nbits);
-  }
-
-  pub fn as_slice(&mut self) -> BitSlice {
-    let s = self.storage.as_mut_slice();
-    return BitSlice::new(s, self.nbits);
-  }
 }
 
-// -------------------------------------------------------------------------------------------------
 #[test]
 fn offset_of_test() {
-  let x = BitVec::new(vec![Bitpack32::falses(), Bitpack32::falses()], 40);
+  let mut v = vec![Bitpack32::falses(), Bitpack32::falses()];
+  let x = BitSlice::new(v.as_mut_slice(), 40);
   assert_eq!(x.offset_of(0), (0, 0));
   assert_eq!(x.offset_of(1), (0, 1));
   assert_eq!(x.offset_of(31), (0, 31));
