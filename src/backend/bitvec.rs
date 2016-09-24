@@ -1,6 +1,7 @@
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 
+#[derive(Debug)]
 pub struct BitVec {
   storage: Vec<Bitpack32>,
   nbits: usize,

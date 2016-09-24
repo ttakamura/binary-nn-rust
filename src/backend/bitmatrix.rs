@@ -3,6 +3,7 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitvec::BitVec;
 
+#[derive(Debug)]
 pub struct BitMatrix2 {
   storage: Vec<Bitpack32>,
   nbits: (usize, usize), // (row, col)
@@ -90,6 +91,15 @@ impl BitMatrix for BitMatrix2 {
     return (w, b);
   }
 
+  // pub fn row(&self, index: usize) -> &BitVec {
+  //  let (_, ncol) = self.nbits;
+  //  let s = index * self.block_per_row();
+  //  let e = s + self.block_per_row();
+  //  let v = self.storage[s..e].to_vec();
+  //  let bv = BitVec::new(v, ncol);
+  //  return &bv;
+  // }
+
   #[inline]
   fn len(&self) -> Self::Index {
     self.nbits
@@ -117,14 +127,17 @@ impl BitMatrix for BitMatrix2 {
 }
 
 impl BitMatrix2 {
-  pub fn row(&self, index: usize) -> &BitVec {
-    let (_, ncol) = self.nbits;
-    let s = index * self.block_per_row();
-    let e = s + self.block_per_row();
-    let v = self.storage[s..e].to_vec();
-    let bv = BitVec::new(v, ncol);
-    return &bv;
-  }
+  // pub fn row(&self, irow: usize) -> BitVec {
+  //   let (nrow, ncol) = self.nbits;
+  //   let (w, b) = self.offset_of((irow, 0));
+  //   let vec: Vec<Bitpack32> = vec![];
+  //
+  //   for x in self.storage[w..w + (self.block_per_row())].to_iter() {
+  //
+  //   }
+  //
+  //   return BitVec::new(vec, ncol);
+  // }
 
   #[inline]
   fn block_per_row(&self) -> usize {
