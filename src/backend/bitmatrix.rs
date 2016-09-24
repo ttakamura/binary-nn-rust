@@ -76,15 +76,6 @@ impl BitMatrix for BitMatrix2 {
     return (w, b);
   }
 
-  // pub fn row(&self, index: usize) -> &BitVec {
-  //  let (_, ncol) = self.nbits;
-  //  let s = index * self.block_per_row();
-  //  let e = s + self.block_per_row();
-  //  let v = self.storage[s..e].to_vec();
-  //  let bv = BitVec::new(v, ncol);
-  //  return &bv;
-  // }
-
   #[inline]
   fn len(&self) -> Self::Index {
     self.nbits
