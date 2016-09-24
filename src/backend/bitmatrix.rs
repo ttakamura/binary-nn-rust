@@ -3,7 +3,6 @@ use std::slice::Iter;
 use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
-use backend::bitvec::BitVec;
 
 #[derive(Debug)]
 pub struct BitMatrix2 {
@@ -19,6 +18,13 @@ pub trait BitMatrix {
     return self.get_block(w).get(b);
   }
 
+  fn offset_of(&self, index: Self::Index) -> (usize, usize);
+  fn len(&self) -> Self::Index;
+  fn get_iter(&self) -> Iter<Bitpack32>;
+  fn get_block(&self, index: usize) -> &Bitpack32;
+}
+
+pub trait BitMatrixMut: BitMatrix {
   fn set_true(&mut self, index: Self::Index) {
     let (w, b) = self.offset_of(index);
     return self.get_mut_block(w).set_true(b);
@@ -29,19 +35,19 @@ pub trait BitMatrix {
     return self.get_mut_block(w).set_false(b);
   }
 
-  fn mut_union(&mut self, other: &Self) {
+  fn mut_union(&mut self, other: &BitMatrix<Index = Self::Index>) {
     self.process(other, |a, b| a.mut_union(b))
   }
 
-  fn mut_intersect(&mut self, other: &Self) {
+  fn mut_intersect(&mut self, other: &BitMatrix<Index = Self::Index>) {
     self.process(other, |a, b| a.mut_intersect(b))
   }
 
-  fn mut_xor(&mut self, other: &Self) {
+  fn mut_xor(&mut self, other: &BitMatrix<Index = Self::Index>) {
     self.process(other, |a, b| a.mut_xor(b))
   }
 
-  fn process<F>(&mut self, other: &Self, mut op: F)
+  fn process<F>(&mut self, other: &BitMatrix<Index = Self::Index>, mut op: F)
     where F: FnMut(&mut Bitpack32, &Bitpack32)
   {
     if self.len() != other.len() {
@@ -52,11 +58,7 @@ pub trait BitMatrix {
     }
   }
 
-  fn offset_of(&self, index: Self::Index) -> (usize, usize);
-  fn len(&self) -> Self::Index;
-  fn get_iter(&self) -> Iter<Bitpack32>;
   fn get_mut_iter(&mut self) -> IterMut<Bitpack32>;
-  fn get_block(&self, index: usize) -> &Bitpack32;
   fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32;
 }
 
@@ -94,13 +96,15 @@ impl BitMatrix for BitMatrix2 {
   }
 
   #[inline]
-  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
-    self.storage.iter_mut()
-  }
-
-  #[inline]
   fn get_block(&self, index: usize) -> &Bitpack32 {
     &self.storage[index]
+  }
+}
+
+impl BitMatrixMut for BitMatrix2 {
+  #[inline]
+  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
+    self.storage.iter_mut()
   }
 
   #[inline]
@@ -149,41 +153,4 @@ impl BitMatrix2 {
   fn block_per_row_of(ncol: usize) -> usize {
     return ncol / Bitpack32::limit_index() + 1;
   }
-}
-
-
-// -------------------------------------------------------------------------------------------------
-#[test]
-fn offset_of_test() {
-  let x = BitMatrix2::falses((3, 40));
-
-  assert_eq!(x.offset_of((0, 0)), (0, 0));
-  assert_eq!(x.offset_of((0, 10)), (0, 10));
-  assert_eq!(x.offset_of((0, 31)), (0, 31));
-
-  assert_eq!(x.offset_of((0, 32 + 0)), (1, 0));
-  assert_eq!(x.offset_of((0, 32 + 7)), (1, 7));
-
-  assert_eq!(x.offset_of((1, 0)), (2, 0));
-  assert_eq!(x.offset_of((1, 5)), (2, 5));
-  assert_eq!(x.offset_of((1, 31)), (2, 31));
-
-  assert_eq!(x.offset_of((1, 32 + 0)), (3, 0));
-  assert_eq!(x.offset_of((1, 32 + 7)), (3, 7));
-
-  assert_eq!(x.offset_of((2, 0)), (4, 0));
-  assert_eq!(x.offset_of((2, 5)), (4, 5));
-  assert_eq!(x.offset_of((2, 31)), (4, 31));
-
-  assert_eq!(x.offset_of((2, 32 + 0)), (5, 0));
-  assert_eq!(x.offset_of((2, 32 + 7)), (5, 7));
-}
-
-#[test]
-fn bitmatrix_from_falses() {
-  let x = BitMatrix2::falses((3, 40));
-  assert_eq!(x.storage.len(), 6);
-  assert_eq!(x.get((0, 0)), false);
-  assert_eq!(x.get((1, 20)), false);
-  assert_eq!(x.get((2, 39)), false);
 }

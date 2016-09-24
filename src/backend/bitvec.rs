@@ -2,7 +2,7 @@ use std::slice::Iter;
 use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
-use backend::bitmatrix::BitMatrix;
+use backend::bitmatrix::*;
 use backend::bitslice::BitSlice;
 
 #[derive(Debug)]
@@ -35,13 +35,15 @@ impl BitMatrix for BitVec {
   }
 
   #[inline]
-  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
-    self.storage.iter_mut()
-  }
-
-  #[inline]
   fn get_block(&self, index: usize) -> &Bitpack32 {
     &self.storage[index]
+  }
+}
+
+impl BitMatrixMut for BitVec {
+  #[inline]
+  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
+    self.storage.iter_mut()
   }
 
   #[inline]
