@@ -1,4 +1,6 @@
 use std::cmp::PartialEq;
+use std::slice::Iter;
+use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitvec::BitVec;
@@ -45,30 +47,22 @@ pub trait BitMatrix {
     if self.len() != other.len() {
       panic!("self.len should be the same as other.len()");
     }
-    for (a, b) in self.get_mut_storage().iter_mut().zip(other.get_storage().iter()) {
+    for (a, b) in self.get_mut_iter().zip(other.get_iter()) {
       op(a, b);
     }
   }
 
-  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self where Self: Sized;
   fn falses(nbits: Self::Index) -> Self where Self: Sized;
-  fn len(&self) -> Self::Index;
   fn offset_of(&self, index: Self::Index) -> (usize, usize);
-  fn get_storage(&self) -> &Vec<Bitpack32>;
-  fn get_mut_storage(&mut self) -> &mut Vec<Bitpack32>;
+  fn len(&self) -> Self::Index;
+  fn get_iter(&self) -> Iter<Bitpack32>;
+  fn get_mut_iter(&mut self) -> IterMut<Bitpack32>;
   fn get_block(&self, index: usize) -> &Bitpack32;
   fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32;
 }
 
 impl BitMatrix for BitMatrix2 {
   type Index = (usize, usize);
-
-  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self {
-    return BitMatrix2 {
-      storage: vec,
-      nbits: nbits,
-    };
-  }
 
   fn falses(nbits: Self::Index) -> Self {
     let (nrow, ncol) = nbits;
@@ -106,13 +100,13 @@ impl BitMatrix for BitMatrix2 {
   }
 
   #[inline]
-  fn get_storage(&self) -> &Vec<Bitpack32> {
-    &self.storage
+  fn get_iter(&self) -> Iter<Bitpack32> {
+    self.storage.iter()
   }
 
   #[inline]
-  fn get_mut_storage(&mut self) -> &mut Vec<Bitpack32> {
-    &mut self.storage
+  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
+    self.storage.iter_mut()
   }
 
   #[inline]
@@ -127,6 +121,13 @@ impl BitMatrix for BitMatrix2 {
 }
 
 impl BitMatrix2 {
+  fn new(vec: Vec<Bitpack32>, nbits: <BitMatrix2 as BitMatrix>::Index) -> Self {
+    return BitMatrix2 {
+      storage: vec,
+      nbits: nbits,
+    };
+  }
+
   // pub fn row(&self, irow: usize) -> BitVec {
   //   let (nrow, ncol) = self.nbits;
   //   let (w, b) = self.offset_of((irow, 0));
