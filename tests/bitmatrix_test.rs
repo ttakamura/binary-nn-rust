@@ -26,7 +26,7 @@ mod bitmatrix_tests {
   #[test]
   fn bitmatrix_union() {
     let (mut x, y) = prepare_matrix_for_union();
-    x.mut_union(&y);
+    x.mut_iter().union(&y.iter());
     assert_eq!(x.get((1, 0)), false);
     assert_eq!(x.get((1, 30)), true);
     assert_eq!(x.get((1, 31)), true);
@@ -37,7 +37,7 @@ mod bitmatrix_tests {
   #[test]
   fn bitmatrix_intersect() {
     let (mut x, y) = prepare_matrix_for_union();
-    x.mut_intersect(&y);
+    x.mut_iter().intersect(&y.iter());
     assert_eq!(x.get((1, 0)), false);
     assert_eq!(x.get((1, 30)), false);
     assert_eq!(x.get((1, 31)), true);
@@ -48,7 +48,7 @@ mod bitmatrix_tests {
   #[test]
   fn bitmatrix_xor() {
     let (mut x, y) = prepare_matrix_for_union();
-    x.mut_xor(&y);
+    x.mut_iter().xor(&y.iter());
     assert_eq!(x.get((1, 0)), false);
     assert_eq!(x.get((1, 30)), true);
     assert_eq!(x.get((1, 31)), false);

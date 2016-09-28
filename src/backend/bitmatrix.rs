@@ -3,6 +3,7 @@ use std::slice::Iter;
 use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
+use backend::bititer::*;
 
 #[derive(Debug)]
 pub struct BitMatrix2 {
@@ -15,51 +16,37 @@ pub trait BitMatrix {
 
   fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
-    return self.get_block(w).get(b);
+    return self.block(w).get(b);
+  }
+
+  fn iter(&self) -> BitIter {
+    BitIter::new(self.as_slice(), 0, self.block_len(), 1);
   }
 
   fn offset_of(&self, index: Self::Index) -> (usize, usize);
   fn len(&self) -> Self::Index;
-  fn get_iter(&self) -> Iter<Bitpack32>;
-  fn get_block(&self, index: usize) -> &Bitpack32;
+  fn block_len(&self) -> usize;
+  fn block(&self, index: usize) -> &Bitpack32;
+  fn as_slice(&self) -> &[Bitpack32];
 }
 
 pub trait BitMatrixMut: BitMatrix {
   fn set_true(&mut self, index: Self::Index) {
     let (w, b) = self.offset_of(index);
-    return self.get_mut_block(w).set_true(b);
+    return self.mut_block(w).set_true(b);
   }
 
   fn set_false(&mut self, index: Self::Index) {
     let (w, b) = self.offset_of(index);
-    return self.get_mut_block(w).set_false(b);
+    return self.mut_block(w).set_false(b);
   }
 
-  fn mut_union(&mut self, other: &BitMatrix<Index = Self::Index>) {
-    self.process(other, |a, b| a.mut_union(b))
+  fn mut_iter(&mut self) -> BitIterMut {
+    BitIterMut::new(self.as_mut_slice(), 0, self.block_len(), 1);
   }
 
-  fn mut_intersect(&mut self, other: &BitMatrix<Index = Self::Index>) {
-    self.process(other, |a, b| a.mut_intersect(b))
-  }
-
-  fn mut_xor(&mut self, other: &BitMatrix<Index = Self::Index>) {
-    self.process(other, |a, b| a.mut_xor(b))
-  }
-
-  fn process<F>(&mut self, other: &BitMatrix<Index = Self::Index>, mut op: F)
-    where F: FnMut(&mut Bitpack32, &Bitpack32)
-  {
-    if self.len() != other.len() {
-      panic!("self.len should be the same as other.len()");
-    }
-    for (a, b) in self.get_mut_iter().zip(other.get_iter()) {
-      op(a, b);
-    }
-  }
-
-  fn get_mut_iter(&mut self) -> IterMut<Bitpack32>;
-  fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32;
+  fn mut_block(&mut self, index: usize) -> &mut Bitpack32;
+  fn as_mut_slice(&self) -> &mut [Bitpack32];
 }
 
 impl BitMatrix for BitMatrix2 {
@@ -76,31 +63,31 @@ impl BitMatrix for BitMatrix2 {
     return (w, b);
   }
 
-  #[inline]
   fn len(&self) -> Self::Index {
     self.nbits
   }
 
-  #[inline]
-  fn get_iter(&self) -> Iter<Bitpack32> {
-    self.storage.iter()
+  fn block_len(&self) -> usize {
+    let (nrow, ncol) = self.nbits;
+    return nrow * self.block_per_row();
   }
 
-  #[inline]
-  fn get_block(&self, index: usize) -> &Bitpack32 {
+  fn block(&self, index: usize) -> &Bitpack32 {
     &self.storage[index]
+  }
+
+  fn as_slice(&self) -> &[Bitpack32] {
+    self.storage.as_slice()
   }
 }
 
 impl BitMatrixMut for BitMatrix2 {
-  #[inline]
-  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
-    self.storage.iter_mut()
+  fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
+    &mut self.storage[index]
   }
 
-  #[inline]
-  fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32 {
-    &mut self.storage[index]
+  fn as_mut_slice(&self) -> &mut [Bitpack32] {
+    self.storage.as_mut_slice()
   }
 }
 

@@ -3,6 +3,7 @@ use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix::*;
+use backend::bititer::*;
 
 #[derive(Debug)]
 pub struct BitVec {
@@ -13,7 +14,6 @@ pub struct BitVec {
 impl BitMatrix for BitVec {
   type Index = usize;
 
-  #[inline]
   fn offset_of(&self, index: Self::Index) -> (usize, usize) {
     if index >= self.nbits {
       panic!("index should smaller than self.nbits")
@@ -23,31 +23,30 @@ impl BitMatrix for BitVec {
     return (w, b);
   }
 
-  #[inline]
   fn len(&self) -> Self::Index {
     self.nbits
   }
 
-  #[inline]
-  fn get_iter(&self) -> Iter<Bitpack32> {
-    self.storage.iter()
+  fn block_len(&self) -> usize {
+    self.block_num()
   }
 
-  #[inline]
-  fn get_block(&self, index: usize) -> &Bitpack32 {
+  fn block(&self, index: usize) -> &Bitpack32 {
     &self.storage[index]
+  }
+
+  fn as_slice(&self) -> &[Bitpack32] {
+    self.storage.as_slice()
   }
 }
 
 impl BitMatrixMut for BitVec {
-  #[inline]
-  fn get_mut_iter(&mut self) -> IterMut<Bitpack32> {
-    self.storage.iter_mut()
+  fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
+    &mut self.storage[index]
   }
 
-  #[inline]
-  fn get_mut_block(&mut self, index: usize) -> &mut Bitpack32 {
-    &mut self.storage[index]
+  fn as_mut_slice(&self) -> &mut [Bitpack32] {
+    self.storage.as_mut_slice()
   }
 }
 
@@ -60,12 +59,21 @@ impl BitVec {
   }
 
   pub fn falses(nbits: <BitVec as BitMatrix>::Index) -> Self {
-    let block_num = nbits / Bitpack32::limit_index() + 1;
     let mut vec: Vec<Bitpack32> = vec![];
-    for _ in 0..block_num {
+    for _ in 0..BitVec::block_num_of(nbits) {
       vec.push(Bitpack32::falses());
     }
     return BitVec::new(vec, nbits);
+  }
+
+  #[inline]
+  fn block_num(&self) -> usize {
+    return BitVec::block_num_of(self.nbits);
+  }
+
+  #[inline]
+  fn block_num_of(ncol: usize) -> usize {
+    return ncol / Bitpack32::limit_index() + 1;
   }
 }
 
