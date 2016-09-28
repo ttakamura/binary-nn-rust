@@ -20,13 +20,16 @@ pub trait BitMatrix {
   }
 
   fn iter(&self) -> BitIter {
-    BitIter::new(self.as_slice(), 0, self.block_len(), 1);
+    BitIter::new(self.as_slice(), 0, self.block_len(), 1)
+  }
+
+  fn block(&self, index: usize) -> &Bitpack32 {
+    &self.as_slice()[index]
   }
 
   fn offset_of(&self, index: Self::Index) -> (usize, usize);
   fn len(&self) -> Self::Index;
   fn block_len(&self) -> usize;
-  fn block(&self, index: usize) -> &Bitpack32;
   fn as_slice(&self) -> &[Bitpack32];
 }
 
@@ -42,11 +45,14 @@ pub trait BitMatrixMut: BitMatrix {
   }
 
   fn mut_iter(&mut self) -> BitIterMut {
-    BitIterMut::new(self.as_mut_slice(), 0, self.block_len(), 1);
+    BitIterMut::new(self.as_mut_slice(), 0, self.block_len(), 1)
   }
 
-  fn mut_block(&mut self, index: usize) -> &mut Bitpack32;
-  fn as_mut_slice(&self) -> &mut [Bitpack32];
+  fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
+    &mut self.as_mut_slice()[index]
+  }
+
+  fn as_mut_slice(&mut self) -> &mut [Bitpack32];
 }
 
 impl BitMatrix for BitMatrix2 {
@@ -72,21 +78,13 @@ impl BitMatrix for BitMatrix2 {
     return nrow * self.block_per_row();
   }
 
-  fn block(&self, index: usize) -> &Bitpack32 {
-    &self.storage[index]
-  }
-
   fn as_slice(&self) -> &[Bitpack32] {
     self.storage.as_slice()
   }
 }
 
 impl BitMatrixMut for BitMatrix2 {
-  fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
-    &mut self.storage[index]
-  }
-
-  fn as_mut_slice(&self) -> &mut [Bitpack32] {
+  fn as_mut_slice(&mut self) -> &mut [Bitpack32] {
     self.storage.as_mut_slice()
   }
 }

@@ -31,21 +31,13 @@ impl BitMatrix for BitVec {
     self.block_num()
   }
 
-  fn block(&self, index: usize) -> &Bitpack32 {
-    &self.storage[index]
-  }
-
   fn as_slice(&self) -> &[Bitpack32] {
     self.storage.as_slice()
   }
 }
 
 impl BitMatrixMut for BitVec {
-  fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
-    &mut self.storage[index]
-  }
-
-  fn as_mut_slice(&self) -> &mut [Bitpack32] {
+  fn as_mut_slice(&mut self) -> &mut [Bitpack32] {
     self.storage.as_mut_slice()
   }
 }
