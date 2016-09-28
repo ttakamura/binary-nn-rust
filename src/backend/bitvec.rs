@@ -3,7 +3,6 @@ use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix::*;
-use backend::bitslice::BitSlice;
 
 #[derive(Debug)]
 pub struct BitVec {
@@ -67,11 +66,6 @@ impl BitVec {
       vec.push(Bitpack32::falses());
     }
     return BitVec::new(vec, nbits);
-  }
-
-  pub fn as_slice(&mut self) -> BitSlice {
-    let s = self.storage.as_mut_slice();
-    return BitSlice::new(s, self.nbits);
   }
 }
 
