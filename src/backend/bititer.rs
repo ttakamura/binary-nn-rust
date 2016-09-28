@@ -92,6 +92,14 @@ impl<'a> BitIterMut<'a> {
     BitIterCursor::new(self.from, self.length, self.step)
   }
 
+  pub fn union(&mut self, other: &BitIter) {
+    self.mut_process(other, |a, b| a.mut_union(b))
+  }
+
+  pub fn intersect(&mut self, other: &BitIter) {
+    self.mut_process(other, |a, b| a.mut_intersect(b))
+  }
+
   pub fn xor(&mut self, other: &BitIter) {
     self.mut_process(other, |a, b| a.mut_xor(b))
   }
