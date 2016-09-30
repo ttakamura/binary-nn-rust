@@ -2,7 +2,8 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 
 // Cursor ---------------------------------------------------------------
-struct BitIterCursor {
+#[derive(Debug)]
+pub struct BitIterCursor {
   from: usize,
   length: usize,
   step: usize,
@@ -26,10 +27,11 @@ impl BitIterCursor {
   }
 
   pub fn finish(&self) -> bool {
-    self.index < self.from + (self.length * self.step)
+    // println!("{:?}", self);
+    return self.index >= self.from + (self.length * self.step);
   }
 
-  pub fn next(&mut self) -> usize {
+  pub fn next_index(&mut self) -> usize {
     let i = self.index;
     self.index += self.step;
     return i;
@@ -43,7 +45,7 @@ impl Iterator for BitIterCursor {
     if self.finish() {
       return None;
     } else {
-      return Some(self.next());
+      return Some(self.next_index());
     }
   }
 }
@@ -66,7 +68,7 @@ impl<'a> BitIter<'a> {
     }
   }
 
-  fn iter(&self) -> BitIterCursor {
+  pub fn iter(&self) -> BitIterCursor {
     BitIterCursor::new(self.from, self.length, self.step)
   }
 }
@@ -113,7 +115,9 @@ impl<'a> BitIterMut<'a> {
       panic!("self lenth should be the same as other lenth");
     }
     for i in self_cursor {
-      op(&mut self.storage[i], &other.storage[other_cursor.next()]);
+      let j = other_cursor.next_index();
+      println!("{}, {:?}", i, j);
+      op(&mut self.storage[i], &other.storage[j]);
     }
   }
 }

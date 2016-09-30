@@ -1,6 +1,4 @@
 use std::cmp::PartialEq;
-use std::slice::Iter;
-use std::slice::IterMut;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bititer::*;
@@ -45,7 +43,8 @@ pub trait BitMatrixMut: BitMatrix {
   }
 
   fn mut_iter(&mut self) -> BitIterMut {
-    BitIterMut::new(self.as_mut_slice(), 0, self.block_len(), 1)
+    let length = self.block_len();
+    BitIterMut::new(self.as_mut_slice(), 0, length, 1)
   }
 
   fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
@@ -74,18 +73,18 @@ impl BitMatrix for BitMatrix2 {
   }
 
   fn block_len(&self) -> usize {
-    let (nrow, ncol) = self.nbits;
+    let (nrow, _) = self.nbits;
     return nrow * self.block_per_row();
   }
 
   fn as_slice(&self) -> &[Bitpack32] {
-    self.storage.as_slice()
+    &self.storage[..]
   }
 }
 
 impl BitMatrixMut for BitMatrix2 {
   fn as_mut_slice(&mut self) -> &mut [Bitpack32] {
-    self.storage.as_mut_slice()
+    &mut self.storage[..]
   }
 }
 
