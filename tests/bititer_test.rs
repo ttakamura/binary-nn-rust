@@ -25,19 +25,39 @@ mod bititer_tests {
     assert_eq!(c.next(), None);
   }
 
-  fn bititer_cursor_from() {
-    let mut c = xi.iter();
+  #[test]
+  fn bititer_cursor_row() {
+    // Matrix(3 x 3).row(1)
+    let mut c = BitIterCursor::new(3, 3, 1);
+    assert_eq!(c.len(), 3);
+    assert_eq!(c.finish(), false);
 
+    assert_eq!(c.next(), Some(3));
+    assert_eq!(c.finish(), false);
+
+    assert_eq!(c.next(), Some(4));
+    assert_eq!(c.finish(), false);
+
+    assert_eq!(c.next(), Some(5));
+    assert_eq!(c.finish(), true);
+
+    assert_eq!(c.next(), None);
+  }
+
+  #[test]
+  fn bititer_cursor_col() {
+    // Matrix(3 x 3).col(1)
+    let mut c = BitIterCursor::new(0, 3, 3);
     assert_eq!(c.len(), 3);
     assert_eq!(c.finish(), false);
 
     assert_eq!(c.next(), Some(0));
     assert_eq!(c.finish(), false);
 
-    assert_eq!(c.next(), Some(1));
+    assert_eq!(c.next(), Some(3));
     assert_eq!(c.finish(), false);
 
-    assert_eq!(c.next(), Some(2));
+    assert_eq!(c.next(), Some(6));
     assert_eq!(c.finish(), true);
 
     assert_eq!(c.next(), None);

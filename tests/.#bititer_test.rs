@@ -1,1 +1,0 @@
-tatsuya@TakamuraMacBookAir-1784.local.396
