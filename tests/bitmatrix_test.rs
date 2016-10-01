@@ -90,23 +90,37 @@ mod bitmatrix_tests {
     assert_eq!(x.get((2, 39)), false);
   }
 
-  // #[test]
-  // fn bitmatrix_row() {
-  //   let mut x = BitMatrix2::falses((3, 34));
-  //   x.set_true((1, 0));
-  //   x.set_true((1, 10));
-  //   x.set_true((1, 31));
-  //   x.set_true((1, 33));
-  //
-  //   let row = x.row(1);
-  //   assert_eq!(row.get(0), true);
-  //   assert_eq!(row.get(1), false);
-  //   assert_eq!(row.get(9), false);
-  //   assert_eq!(row.get(10), true);
-  //   assert_eq!(row.get(11), false);
-  //   assert_eq!(row.get(30), false);
-  //   assert_eq!(row.get(31), true);
-  //   assert_eq!(row.get(32), false);
-  //   assert_eq!(row.get(33), true);
-  // }
+  #[test]
+  fn bitmatrix_row_iter() {
+    let mut x = BitMatrix2::falses((3, 34));
+    x.set_true((1, 0));
+    x.set_true((1, 31));
+    x.set_true((1, 33));
+
+    let mut y = BitMatrix2::falses((3, 34));
+    y.set_true((1, 10));
+    y.set_true((1, 20));
+
+    {
+      let mut xrow = x.mut_row_iter(1);
+      let yrow = y.row_iter(1);
+      xrow.union(&yrow);
+    }
+
+    assert_eq!(x.get((1, 0)), true);
+    assert_eq!(x.get((1, 1)), false);
+    assert_eq!(x.get((1, 9)), false);
+    assert_eq!(x.get((1, 10)), true);
+    assert_eq!(x.get((1, 11)), false);
+    assert_eq!(x.get((1, 19)), false);
+    assert_eq!(x.get((1, 20)), true);
+    assert_eq!(x.get((1, 30)), false);
+    assert_eq!(x.get((1, 31)), true);
+    assert_eq!(x.get((1, 32)), false);
+    assert_eq!(x.get((1, 33)), true);
+    for i in 0..34 {
+      assert_eq!(x.get((0, i)), false);
+      assert_eq!(x.get((2, i)), false);
+    }
+  }
 }

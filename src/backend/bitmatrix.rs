@@ -106,17 +106,16 @@ impl BitMatrix2 {
     return BitMatrix2::new(vec, nbits);
   }
 
-  // pub fn row(&self, irow: usize) -> BitVec {
-  //   let (nrow, ncol) = self.nbits;
-  //   let (w, b) = self.offset_of((irow, 0));
-  //   let vec: Vec<Bitpack32> = vec![];
-  //
-  //   for x in self.storage[w..w + (self.block_per_row())].to_iter() {
-  //
-  //   }
-  //
-  //   return BitVec::new(vec, ncol);
-  // }
+  pub fn row_iter(&self, irow: usize) -> BitIter {
+    let (w, _) = self.offset_of((irow, 0));
+    return BitIter::new(self.as_slice(), w, self.block_per_row(), 1);
+  }
+
+  pub fn mut_row_iter(&mut self, irow: usize) -> BitIterMut {
+    let (w, _) = self.offset_of((irow, 0));
+    let length = self.block_per_row();
+    return BitIterMut::new(self.as_mut_slice(), w, length, 1);
+  }
 
   #[inline]
   fn block_per_row(&self) -> usize {
