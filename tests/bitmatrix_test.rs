@@ -57,6 +57,17 @@ mod bitmatrix_tests {
   }
 
   #[test]
+  fn bitmatrix_xnor() {
+    let (mut x, y) = prepare_matrix_for_union();
+    x.mut_iter().xnor(&y.iter());
+    assert_eq!(x.get((1, 0)), true);
+    assert_eq!(x.get((1, 30)), false);
+    assert_eq!(x.get((1, 31)), true);
+    assert_eq!(x.get((1, 32)), false);
+    assert_eq!(x.get((1, 33)), true);
+  }
+
+  #[test]
   fn bitmatrix_offset_of_test() {
     let x = BitMatrix2::falses((3, 40));
 

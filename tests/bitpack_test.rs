@@ -105,4 +105,19 @@ mod bitpack_tests {
     assert_eq!(x.get(30), false);
     assert_eq!(x.get(31), true);
   }
+
+  #[test]
+  fn bitpack_xnor() {
+    let mut x = Bitpack32::falses();
+    let mut y = Bitpack32::falses();
+    x.set_true(29);
+    x.set_true(30);
+    y.set_true(30);
+    y.set_true(31);
+    x.mut_xnor(&y);
+    assert_eq!(x.get(28), true);
+    assert_eq!(x.get(29), false);
+    assert_eq!(x.get(30), true);
+    assert_eq!(x.get(31), false);
+  }
 }

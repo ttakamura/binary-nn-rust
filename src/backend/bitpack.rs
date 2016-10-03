@@ -13,6 +13,7 @@ pub trait Bitpack {
   fn mut_union(&mut self, other: &Self);
   fn mut_intersect(&mut self, other: &Self);
   fn mut_xor(&mut self, other: &Self);
+  fn mut_xnor(&mut self, other: &Self);
 }
 
 impl Bitpack32 {
@@ -66,6 +67,10 @@ impl Bitpack for Bitpack32 {
 
   fn mut_xor(&mut self, other: &Bitpack32) {
     self.storage = self.storage ^ other.storage;
+  }
+
+  fn mut_xnor(&mut self, other: &Bitpack32) {
+    self.storage = !(self.storage ^ other.storage);
   }
 }
 

@@ -106,6 +106,10 @@ impl<'a> BitIterMut<'a> {
     self.mut_process(other, |a, b| a.mut_xor(b))
   }
 
+  pub fn xnor(&mut self, other: &BitIter) {
+    self.mut_process(other, |a, b| a.mut_xnor(b))
+  }
+
   pub fn mut_process<F>(&mut self, other: &BitIter, mut op: F)
     where F: FnMut(&mut Bitpack32, &Bitpack32)
   {
