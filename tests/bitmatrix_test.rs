@@ -2,6 +2,7 @@ extern crate binary_nn;
 
 mod bitmatrix_tests {
   use binary_nn::backend::bitmatrix::*;
+  use binary_nn::backend::bitmatrix_trait::*;
 
   fn prepare_matrix_for_union() -> (BitMatrix2, BitMatrix2) {
     let mut x = BitMatrix2::falses((3, 34));
