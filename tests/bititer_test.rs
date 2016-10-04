@@ -7,7 +7,7 @@ mod bititer_tests {
   #[test]
   fn bititer_cursor() {
     let x = vec![Bitpack32::falses(), Bitpack32::falses(), Bitpack32::falses()];
-    let xi = BitIter::new(&x[..], 0, 3, 1);
+    let xi = BitIter::new(&x[..], 0, 3, 1, 1);
     let mut c = xi.iter();
 
     assert_eq!(c.len(), 3);
@@ -28,7 +28,7 @@ mod bititer_tests {
   #[test]
   fn bititer_cursor_row() {
     // Matrix(3 x 3).row(1)
-    let mut c = BitIterCursor::new(3, 3, 1);
+    let mut c = BitIterCursor::new(3, 3, 1, 1);
     assert_eq!(c.len(), 3);
     assert_eq!(c.finish(), false);
 
@@ -47,7 +47,7 @@ mod bititer_tests {
   #[test]
   fn bititer_cursor_col() {
     // Matrix(3 x 3).col(1)
-    let mut c = BitIterCursor::new(0, 3, 3);
+    let mut c = BitIterCursor::new(0, 3, 3, 1);
     assert_eq!(c.len(), 3);
     assert_eq!(c.finish(), false);
 
@@ -75,8 +75,8 @@ mod bititer_tests {
     y[1].set_true(31);
 
     {
-      let mut xi = BitIterMut::new(&mut x[..], 0, 2, 1);
-      let yi = BitIter::new(&y[..], 0, 2, 1);
+      let mut xi = BitIterMut::new(&mut x[..], 0, 2, 1, 1);
+      let yi = BitIter::new(&y[..], 0, 2, 1, 1);
       xi.union(&yi);
     }
 
@@ -93,5 +93,29 @@ mod bititer_tests {
         }
       }
     }
+  }
+
+  #[test]
+  fn bititer_cursor_repeat() {
+    // Vector(3).repeat(2)
+    let mut c = BitIterCursor::new(0, 3, 1, 2);
+    assert_eq!(c.len(), 6);
+    assert_eq!(c.finish(), false);
+
+    assert_eq!(c.next(), Some(0));
+    assert_eq!(c.finish(), false);
+    assert_eq!(c.next(), Some(1));
+    assert_eq!(c.finish(), false);
+    assert_eq!(c.next(), Some(2));
+    assert_eq!(c.finish(), false);
+
+    assert_eq!(c.next(), Some(0));
+    assert_eq!(c.finish(), false);
+    assert_eq!(c.next(), Some(1));
+    assert_eq!(c.finish(), false);
+    assert_eq!(c.next(), Some(2));
+    assert_eq!(c.finish(), true);
+
+    assert_eq!(c.next(), None);
   }
 }

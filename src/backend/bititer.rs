@@ -7,23 +7,25 @@ pub struct BitIterCursor {
   from: usize,
   length: usize,
   step: usize,
+  repeat: usize,
   index: usize,
 }
 
 impl BitIterCursor {
   // Matrix(5 x 10).row(4) => from: 40, length: 10, step: 1
   // Matrix(5 x 10).col(9) => from: 9, length: 5, step: 10
-  pub fn new(from: usize, length: usize, step: usize) -> BitIterCursor {
+  pub fn new(from: usize, length: usize, step: usize, repeat: usize) -> BitIterCursor {
     BitIterCursor {
       from: from,
       length: length,
       step: step,
+      repeat: repeat,
       index: from,
     }
   }
 
   pub fn len(&self) -> usize {
-    self.length
+    self.length * self.repeat
   }
 
   pub fn finish(&self) -> bool {
@@ -34,6 +36,10 @@ impl BitIterCursor {
   pub fn next_index(&mut self) -> usize {
     let i = self.index;
     self.index += self.step;
+    if self.finish() && self.repeat > 1 {
+      self.repeat -= 1;
+      self.index = self.from;
+    }
     return i;
   }
 }
@@ -56,20 +62,27 @@ pub struct BitIter<'a> {
   from: usize,
   length: usize,
   step: usize,
+  repeat: usize,
 }
 
 impl<'a> BitIter<'a> {
-  pub fn new(storage: &'a [Bitpack32], from: usize, length: usize, step: usize) -> BitIter {
+  pub fn new(storage: &'a [Bitpack32],
+             from: usize,
+             length: usize,
+             step: usize,
+             repeat: usize)
+             -> BitIter {
     BitIter {
       storage: storage,
       from: from,
       length: length,
       step: step,
+      repeat: repeat,
     }
   }
 
   pub fn iter(&self) -> BitIterCursor {
-    BitIterCursor::new(self.from, self.length, self.step)
+    BitIterCursor::new(self.from, self.length, self.step, self.repeat)
   }
 }
 
@@ -78,20 +91,27 @@ pub struct BitIterMut<'a> {
   from: usize,
   length: usize,
   step: usize,
+  repeat: usize,
 }
 
 impl<'a> BitIterMut<'a> {
-  pub fn new(storage: &'a mut [Bitpack32], from: usize, length: usize, step: usize) -> BitIterMut {
+  pub fn new(storage: &'a mut [Bitpack32],
+             from: usize,
+             length: usize,
+             step: usize,
+             repeat: usize)
+             -> BitIterMut {
     BitIterMut {
       storage: storage,
       from: from,
       length: length,
       step: step,
+      repeat: repeat,
     }
   }
 
   fn iter(&self) -> BitIterCursor {
-    BitIterCursor::new(self.from, self.length, self.step)
+    BitIterCursor::new(self.from, self.length, self.step, self.repeat)
   }
 
   pub fn union(&mut self, other: &BitIter) {

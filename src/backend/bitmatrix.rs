@@ -64,13 +64,13 @@ impl BitMatrix2 {
 
   pub fn row_iter(&self, irow: usize) -> BitIter {
     let (w, _) = self.offset_of((irow, 0));
-    return BitIter::new(self.as_slice(), w, self.block_per_row(), 1);
+    return BitIter::new(self.as_slice(), w, self.block_per_row(), 1, 1);
   }
 
   pub fn mut_row_iter(&mut self, irow: usize) -> BitIterMut {
     let (w, _) = self.offset_of((irow, 0));
     let length = self.block_per_row();
-    return BitIterMut::new(self.as_mut_slice(), w, length, 1);
+    return BitIterMut::new(self.as_mut_slice(), w, length, 1, 1);
   }
 
   #[inline]
