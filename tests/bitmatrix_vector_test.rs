@@ -20,6 +20,7 @@ mod bitmatrix_vector_tests {
     let mut y = BitVec::falses(34);
     y.set_true(29);
     y.set_true(30);
+    y.set_true(33);
     return y;
   }
 
@@ -28,9 +29,10 @@ mod bitmatrix_vector_tests {
     let mut x = prepare_matrix();
     let y = prepare_vector();
 
-    x.mut_row_iter(0).xnor(&y.iter());
-    x.mut_row_iter(1).xnor(&y.iter());
-    x.mut_row_iter(2).xnor(&y.iter());
+    let mut yi = y.iter();
+    yi.repeat(3);
+
+    x.mut_iter().xnor(&yi);
 
     assert_eq!(x.get((0, 28)), false);
     assert_eq!(x.get((0, 29)), true);
@@ -47,6 +49,6 @@ mod bitmatrix_vector_tests {
     assert_eq!(x.get((2, 30)), false);
     assert_eq!(x.get((2, 31)), true);
     assert_eq!(x.get((2, 32)), false);
-    assert_eq!(x.get((2, 33)), false);
+    assert_eq!(x.get((2, 33)), true);
   }
 }

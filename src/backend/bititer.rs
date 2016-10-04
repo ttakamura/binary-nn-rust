@@ -84,6 +84,10 @@ impl<'a> BitIter<'a> {
   pub fn iter(&self) -> BitIterCursor {
     BitIterCursor::new(self.from, self.length, self.step, self.repeat)
   }
+
+  pub fn repeat(&mut self, new_repeat: usize) {
+    self.repeat = new_repeat;
+  }
 }
 
 pub struct BitIterMut<'a> {
@@ -112,6 +116,10 @@ impl<'a> BitIterMut<'a> {
 
   fn iter(&self) -> BitIterCursor {
     BitIterCursor::new(self.from, self.length, self.step, self.repeat)
+  }
+
+  pub fn repeat(&mut self, new_repeat: usize) {
+    self.repeat = new_repeat;
   }
 
   pub fn union(&mut self, other: &BitIter) {
