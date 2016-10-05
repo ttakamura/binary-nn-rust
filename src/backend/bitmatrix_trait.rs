@@ -12,7 +12,7 @@ pub trait BitMatrix {
   }
 
   fn iter(&self) -> BitIter {
-    BitIter::new(self.as_slice(), 0, self.block_len(), 1, 1)
+    BitIter::new(self.as_slice().into_iter())
   }
 
   fn block(&self, index: usize) -> &Bitpack32 {
@@ -38,7 +38,7 @@ pub trait BitMatrixMut: BitMatrix {
 
   fn mut_iter(&mut self) -> BitIterMut {
     let length = self.block_len();
-    return BitIterMut::new(self.as_mut_slice(), 0, length, 1, 1);
+    return BitIterMut::new(self.as_mut_slice().into_iter());
   }
 
   fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {

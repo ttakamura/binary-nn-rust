@@ -66,7 +66,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    x.mut_iter().union(&y.iter());
+    x.mut_iter().union(y.iter());
     assert_eq!(x.get(0), false);
     assert_eq!(x.get(30), true);
     assert_eq!(x.get(31), true);
@@ -82,7 +82,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    x.mut_iter().intersect(&y.iter());
+    x.mut_iter().intersect(y.iter());
     assert_eq!(x.get(0), false);
     assert_eq!(x.get(30), false);
     assert_eq!(x.get(31), true);
@@ -98,7 +98,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    x.mut_iter().xor(&y.iter());
+    x.mut_iter().xor(y.iter());
     assert_eq!(x.get(0), false);
     assert_eq!(x.get(30), true);
     assert_eq!(x.get(31), false);
@@ -114,7 +114,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    x.mut_iter().xnor(&y.iter());
+    x.mut_iter().xnor(y.iter());
     assert_eq!(x.get(0), true);
     assert_eq!(x.get(30), false);
     assert_eq!(x.get(31), true);
