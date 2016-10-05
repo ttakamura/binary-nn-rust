@@ -114,6 +114,13 @@ mod bitpack_tests {
     x.set_true(30);
     y.set_true(30);
     y.set_true(31);
+
+    let z = x.xnor(&y);
+    assert_eq!(z.get(28), true);
+    assert_eq!(z.get(29), false);
+    assert_eq!(z.get(30), true);
+    assert_eq!(z.get(31), false);
+
     x.mut_xnor(&y);
     assert_eq!(x.get(28), true);
     assert_eq!(x.get(29), false);

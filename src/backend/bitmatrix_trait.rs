@@ -37,7 +37,6 @@ pub trait BitMatrixMut: BitMatrix {
   }
 
   fn mut_iter(&mut self) -> BitIterMut {
-    let length = self.block_len();
     return BitIterMut::new(self.as_mut_slice().into_iter());
   }
 

@@ -1,6 +1,5 @@
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
-use backend::bititer::*;
 use backend::bitmatrix_trait::*;
 
 #[derive(Debug)]

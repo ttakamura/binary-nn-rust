@@ -4,6 +4,17 @@ use std::slice::Iter;
 use std::slice::IterMut;
 
 // ----------------------------------------------
+pub enum BitOperation {
+  Xnor,
+}
+
+pub fn process(op: &BitOperation, left: &Bitpack32, right: &Bitpack32) -> Bitpack32 {
+  match *op {
+    BitOperation::Xnor => left.xnor(right),
+  }
+}
+
+// ----------------------------------------------
 pub struct BitIter<'a> {
   raw: Iter<'a, Bitpack32>,
 }

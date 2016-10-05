@@ -1,9 +1,9 @@
-#[derive(Debug)]
+#[derive(Clone,Debug)]
 pub struct Bitpack32 {
   storage: u32,
 }
 
-pub trait Bitpack {
+pub trait Bitpack: Clone {
   fn limit_index() -> usize;
   fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
   fn falses() -> Self where Self: Sized;
@@ -14,6 +14,14 @@ pub trait Bitpack {
   fn mut_intersect(&mut self, other: &Self);
   fn mut_xor(&mut self, other: &Self);
   fn mut_xnor(&mut self, other: &Self);
+
+  fn xnor(&self, other: &Self) -> Self
+    where Self: Sized
+  {
+    let mut x = (*self).clone();
+    x.mut_xnor(other);
+    return x;
+  }
 }
 
 impl Bitpack32 {
