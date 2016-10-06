@@ -13,8 +13,8 @@ mod bititer_tests {
     y.set_true(9);
     y.set_true(10);
 
-    let op = BitOperation::Xnor;
-    let z = process(&op, &x, &y);
+    let op = BitOpXnor {};
+    let z = op.process(&x, &y);
     assert_eq!(z.get(9), false);
     assert_eq!(z.get(10), true);
     assert_eq!(z.get(11), false);
@@ -34,7 +34,7 @@ mod bititer_tests {
 
     {
       let mut xi = BitIterMut::new((&mut x[..]).into_iter());
-      let mut yi = BitIter::new((&y[..]).into_iter());
+      let yi = BitIter::new((&y[..]).into_iter());
       xi.union(yi);
     }
 
