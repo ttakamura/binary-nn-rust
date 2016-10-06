@@ -4,12 +4,12 @@ pub struct Bitpack32 {
 }
 
 pub trait Bitpack: Clone {
-  fn limit_index() -> usize;
+  fn limit_index() -> u32;
   fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
   fn falses() -> Self where Self: Sized;
-  fn get(&self, index: usize) -> bool;
-  fn set_true(&mut self, index: usize);
-  fn set_false(&mut self, index: usize);
+  fn get(&self, index: u32) -> bool;
+  fn set_true(&mut self, index: u32);
+  fn set_false(&mut self, index: u32);
   fn mut_union(&mut self, other: &Self);
   fn mut_intersect(&mut self, other: &Self);
   fn mut_xor(&mut self, other: &Self);
@@ -30,7 +30,7 @@ impl Bitpack32 {
   }
 
   #[inline]
-  fn check_index(index: usize) {
+  fn check_index(index: u32) {
     if index >= Bitpack32::limit_index() {
       panic!("index should smaller than limit_index");
     }
@@ -39,7 +39,7 @@ impl Bitpack32 {
 
 impl Bitpack for Bitpack32 {
   #[inline]
-  fn limit_index() -> usize {
+  fn limit_index() -> u32 {
     32
   }
 
@@ -49,19 +49,19 @@ impl Bitpack for Bitpack32 {
   }
 
   fn falses() -> Bitpack32 {
-    let tmp: Vec<bool> = vec![false; Bitpack32::limit_index()];
+    let tmp: Vec<bool> = vec![false; Bitpack32::limit_index() as usize];
     return Bitpack32::from_bool(tmp);
   }
 
-  fn get(&self, index: usize) -> bool {
+  fn get(&self, index: u32) -> bool {
     return bit_to_bool(self.storage, index);
   }
 
-  fn set_true(&mut self, index: usize) {
+  fn set_true(&mut self, index: u32) {
     self.storage |= single_bit_int(index);
   }
 
-  fn set_false(&mut self, index: usize) {
+  fn set_false(&mut self, index: u32) {
     self.storage &= !(single_bit_int(index));
   }
 
@@ -87,20 +87,20 @@ fn bool_to_int(vec: Vec<bool>) -> u32 {
   let mut tmp: u32 = 0;
   for i in 0..vec.len() {
     if vec[i] {
-      tmp = tmp | single_bit_int(i)
+      tmp = tmp | single_bit_int(i as u32)
     }
   }
   return tmp;
 }
 
 #[inline]
-fn bit_to_bool(x: u32, index: usize) -> bool {
+fn bit_to_bool(x: u32, index: u32) -> bool {
   Bitpack32::check_index(index);
   (x & single_bit_int(index)) != 0
 }
 
 #[inline]
-fn single_bit_int(index: usize) -> u32 {
+fn single_bit_int(index: u32) -> u32 {
   Bitpack32::check_index(index);
   (1 << (Bitpack32::limit_index() - (index + 1)))
 }

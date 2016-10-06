@@ -33,8 +33,8 @@ mod bititer_tests {
     y[1].set_true(31);
 
     {
-      let mut xi = BitIterMut::new((&mut x[..]).into_iter());
-      let yi = BitIter::new((&y[..]).into_iter());
+      let mut xi = BitIterMut::new((&mut x[..]).into_iter(), 64);
+      let yi = BitIter::new((&y[..]).into_iter(), 64);
       xi.union(yi);
     }
 

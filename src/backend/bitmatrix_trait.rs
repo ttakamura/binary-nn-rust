@@ -11,18 +11,15 @@ pub trait BitMatrix {
     return self.block(w).get(b);
   }
 
-  fn iter(&self) -> BitIter {
-    BitIter::new(self.as_slice().into_iter())
+  fn block(&self, index: u32) -> &Bitpack32 {
+    &self.as_slice()[index as usize]
   }
 
-  fn block(&self, index: usize) -> &Bitpack32 {
-    &self.as_slice()[index]
-  }
-
-  fn offset_of(&self, index: Self::Index) -> (usize, usize);
+  fn offset_of(&self, index: Self::Index) -> (u32, u32);
   fn len(&self) -> Self::Index;
-  fn block_len(&self) -> usize;
+  fn block_len(&self) -> u32;
   fn as_slice(&self) -> &[Bitpack32];
+  fn iter(&self) -> BitIter;
 }
 
 pub trait BitMatrixMut: BitMatrix {
@@ -36,13 +33,10 @@ pub trait BitMatrixMut: BitMatrix {
     return self.mut_block(w).set_false(b);
   }
 
-  fn mut_iter(&mut self) -> BitIterMut {
-    return BitIterMut::new(self.as_mut_slice().into_iter());
-  }
-
-  fn mut_block(&mut self, index: usize) -> &mut Bitpack32 {
-    &mut self.as_mut_slice()[index]
+  fn mut_block(&mut self, index: u32) -> &mut Bitpack32 {
+    &mut self.as_mut_slice()[index as usize]
   }
 
   fn as_mut_slice(&mut self) -> &mut [Bitpack32];
+  fn mut_iter(&mut self) -> BitIterMut;
 }

@@ -1,24 +1,25 @@
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
+use backend::bititer::*;
 
 #[derive(Debug)]
 pub struct BitMatrix2 {
   storage: Vec<Bitpack32>,
-  nbits: (usize, usize), // (row, col)
+  nbits: (u32, u32), // (row, col)
 }
 
 impl BitMatrix for BitMatrix2 {
-  type Index = (usize, usize);
+  type Index = (u32, u32);
 
-  fn offset_of(&self, index: Self::Index) -> (usize, usize) {
+  fn offset_of(&self, index: Self::Index) -> (u32, u32) {
     let (nrow, ncol) = self.nbits;
     let (irow, icol) = index;
     if irow >= nrow || icol >= ncol {
       panic!("index should smaller than self.nbits")
     }
-    let w: usize = (irow * self.block_per_row()) + icol / Bitpack32::limit_index();
-    let b: usize = icol % Bitpack32::limit_index();
+    let w = (irow * self.block_per_row()) + icol / Bitpack32::limit_index();
+    let b = icol % Bitpack32::limit_index();
     return (w, b);
   }
 
@@ -26,7 +27,7 @@ impl BitMatrix for BitMatrix2 {
     self.nbits
   }
 
-  fn block_len(&self) -> usize {
+  fn block_len(&self) -> u32 {
     let (nrow, _) = self.nbits;
     return nrow * self.block_per_row();
   }
@@ -34,11 +35,21 @@ impl BitMatrix for BitMatrix2 {
   fn as_slice(&self) -> &[Bitpack32] {
     &self.storage[..]
   }
+
+  fn iter(&self) -> BitIter {
+    let (nrow, ncol) = self.nbits;
+    return BitIter::new(self.as_slice().into_iter(), nrow * ncol);
+  }
 }
 
 impl BitMatrixMut for BitMatrix2 {
   fn as_mut_slice(&mut self) -> &mut [Bitpack32] {
     &mut self.storage[..]
+  }
+
+  fn mut_iter(&mut self) -> BitIterMut {
+    let (nrow, ncol) = self.nbits;
+    return BitIterMut::new(self.as_mut_slice().into_iter(), nrow * ncol);
   }
 }
 
@@ -61,25 +72,25 @@ impl BitMatrix2 {
   }
 
   // TODO
-  // pub fn row_iter(&self, irow: usize) -> BitIter {
+  // pub fn row_iter(&self, irow: u32) -> BitIter {
   //   let (w, _) = self.offset_of((irow, 0));
   //   return BitIter::new(self.as_slice(), w, self.block_per_row(), 1, 1);
   // }
   //
-  // pub fn mut_row_iter(&mut self, irow: usize) -> BitIterMut {
+  // pub fn mut_row_iter(&mut self, irow: u32) -> BitIterMut {
   //   let (w, _) = self.offset_of((irow, 0));
   //   let length = self.block_per_row();
   //   return BitIterMut::new(self.as_mut_slice(), w, length, 1, 1);
   // }
 
   #[inline]
-  fn block_per_row(&self) -> usize {
+  fn block_per_row(&self) -> u32 {
     let (_, ncol) = self.nbits;
     return BitMatrix2::block_per_row_of(ncol);
   }
 
   #[inline]
-  fn block_per_row_of(ncol: usize) -> usize {
+  fn block_per_row_of(ncol: u32) -> u32 {
     return ncol / Bitpack32::limit_index() + 1;
   }
 }

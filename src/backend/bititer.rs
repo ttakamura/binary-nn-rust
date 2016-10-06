@@ -17,46 +17,53 @@ impl BitOperation2 for BitOpXnor {
 }
 
 // ----------------------------------------------
+pub trait BitIterator: Iterator {
+  fn bitlen(&self) -> u32;
+}
+
+// ----------------------------------------------
 pub struct BitIter<'a> {
   raw: Iter<'a, Bitpack32>,
+  bitlen: u32,
 }
 
 impl<'a> Iterator for BitIter<'a> {
   type Item = &'a Bitpack32;
 
   fn next(&mut self) -> Option<Self::Item> {
-    return match self.raw.next() {
-      Some(x) => Some(x),
-      None => None,
-    };
+    self.raw.next()
   }
 }
 
 impl<'a> BitIter<'a> {
-  pub fn new(iter: Iter<Bitpack32>) -> BitIter {
-    BitIter { raw: iter }
+  pub fn new(iter: Iter<Bitpack32>, bitlen: u32) -> BitIter {
+    BitIter {
+      raw: iter,
+      bitlen: bitlen,
+    }
   }
 }
 
 // ----------------------------------------------
 pub struct BitIterMut<'a> {
   raw: IterMut<'a, Bitpack32>,
+  bitlen: u32,
 }
 
 impl<'a> Iterator for BitIterMut<'a> {
   type Item = &'a mut Bitpack32;
 
   fn next(&mut self) -> Option<Self::Item> {
-    return match self.raw.next() {
-      Some(x) => Some(x),
-      None => None,
-    };
+    self.raw.next()
   }
 }
 
 impl<'a> BitIterMut<'a> {
-  pub fn new(iter: IterMut<Bitpack32>) -> BitIterMut {
-    BitIterMut { raw: iter }
+  pub fn new(iter: IterMut<Bitpack32>, bitlen: u32) -> BitIterMut {
+    BitIterMut {
+      raw: iter,
+      bitlen: bitlen,
+    }
   }
 
   pub fn union(&mut self, other: BitIter) {
