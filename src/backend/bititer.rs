@@ -3,22 +3,45 @@ use backend::bitpack::Bitpack;
 use std::slice::Iter;
 use std::slice::IterMut;
 
-// ----------------------------------------------
 pub trait BitOperation2 {
-  fn process(&self, left: &Bitpack32, right: &Bitpack32) -> Bitpack32;
+  fn process(&self, left: Bitpack32, right: Bitpack32) -> Bitpack32;
 }
 
+pub trait BitIterator {
+  fn bitlen(&self) -> u32;
+}
+
+// ----------------------------------------------
 pub struct BitOpXnor;
 
 impl BitOperation2 for BitOpXnor {
-  fn process(&self, left: &Bitpack32, right: &Bitpack32) -> Bitpack32 {
-    left.xnor(right)
+  fn process(&self, left: Bitpack32, right: Bitpack32) -> Bitpack32 {
+    left.xnor(&right)
   }
 }
 
 // ----------------------------------------------
-pub trait BitIterator: Iterator {
-  fn bitlen(&self) -> u32;
+pub struct BitIterZip<I, O>
+  where I: BitIterator + Iterator,
+        O: BitOperation2
+{
+  op: O,
+  left: I,
+  right: I,
+}
+
+impl<I, O> Iterator for BitIterZip<I, O>
+  where I: BitIterator + Iterator<Item = Bitpack32>,
+        O: BitOperation2
+{
+  type Item = Bitpack32;
+
+  fn next(&mut self) -> Option<Self::Item> {
+    match (self.left.next(), self.right.next()) {
+      (Some(a), Some(b)) => Some(self.op.process(a, b)),
+      _ => None,
+    }
+  }
 }
 
 // ----------------------------------------------
@@ -28,10 +51,19 @@ pub struct BitIter<'a> {
 }
 
 impl<'a> Iterator for BitIter<'a> {
-  type Item = &'a Bitpack32;
+  type Item = Bitpack32;
 
   fn next(&mut self) -> Option<Self::Item> {
-    self.raw.next()
+    match self.raw.next() {
+      Some(x) => Some(x.clone()),
+      _ => None,
+    }
+  }
+}
+
+impl<'a> BitIterator for BitIter<'a> {
+  fn bitlen(&self) -> u32 {
+    self.bitlen
   }
 }
 
@@ -87,7 +119,7 @@ impl<'a> BitIterMut<'a> {
   {
     for x in self {
       let y = other.next();
-      op(x, y.unwrap());
+      op(x, &y.unwrap());
     }
   }
 }

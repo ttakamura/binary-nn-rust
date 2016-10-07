@@ -14,7 +14,7 @@ mod bititer_tests {
     y.set_true(10);
 
     let op = BitOpXnor {};
-    let z = op.process(&x, &y);
+    let z = op.process(x, y);
     assert_eq!(z.get(9), false);
     assert_eq!(z.get(10), true);
     assert_eq!(z.get(11), false);
