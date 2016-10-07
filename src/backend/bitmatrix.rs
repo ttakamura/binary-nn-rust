@@ -2,6 +2,7 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
 use backend::bititer::*;
+use backend::bititer_mut::*;
 
 #[derive(Debug)]
 pub struct BitMatrix2 {
