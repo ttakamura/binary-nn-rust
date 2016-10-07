@@ -34,21 +34,14 @@ mod bititer_tests {
   }
 
   #[test]
-  fn bitzip_xnor() {
-    //   let (x, y) = prepare_vector();
-    //   let op = BitOpXnor {};
-    //   let zipper = BitIterZip {
-    //     op: op,
-    //     left: x.iter(),
-    //     right: y.iter(),
-    //   };
-    //
-    //   let first = zipper.next();
-    //   let second = zipper
-    //
-    //   assert_eq!(z.get(9), false);
-    //   assert_eq!(z.get(10), true);
-    //   assert_eq!(z.get(11), false);
-    //   assert_eq!(z.get(12), true);
+  fn bitzip_or() {
+    let (x, y) = prepare_vector();
+    let op = BitOpOr {};
+    let mut zipper = BitIterZip::new(op, x.iter(), y.iter());
+    let fst = zipper.next().unwrap();
+    let snd = zipper.next().unwrap();
+    assert_eq!(fst.pretty_str(), "0000000000 0000000000 0000000001 10");
+    assert_eq!(snd.pretty_str(), "0100000000 0000000000 0000000000 00");
+    assert_eq!(zipper.next().is_none(), true);
   }
 }

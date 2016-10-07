@@ -23,6 +23,14 @@ pub trait Bitpack: Clone {
     return x;
   }
 
+  fn union(&self, other: &Self) -> Self
+    where Self: Sized
+  {
+    let mut x = (*self).clone();
+    x.mut_union(other);
+    return x;
+  }
+
   fn pretty_str(&self) -> String {
     let mut v: Vec<String> = vec![];
     for i in 0..Self::limit_index() {

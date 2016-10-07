@@ -19,6 +19,14 @@ impl BitOperation2 for BitOpXnor {
   }
 }
 
+pub struct BitOpOr;
+
+impl BitOperation2 for BitOpOr {
+  fn process(&self, left: Bitpack32, right: Bitpack32) -> Bitpack32 {
+    left.union(&right)
+  }
+}
+
 // ----------------------------------------------
 pub struct BitIterZip<I, O>
   where I: BitIterator + Iterator,
@@ -39,6 +47,19 @@ impl<I, O> Iterator for BitIterZip<I, O>
     match (self.left.next(), self.right.next()) {
       (Some(a), Some(b)) => Some(self.op.process(a, b)),
       _ => None,
+    }
+  }
+}
+
+impl<I, O> BitIterZip<I, O>
+  where I: BitIterator + Iterator,
+        O: BitOperation2
+{
+  pub fn new(op: O, left: I, right: I) -> Self {
+    BitIterZip {
+      op: op,
+      left: left,
+      right: right,
     }
   }
 }
