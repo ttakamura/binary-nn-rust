@@ -22,6 +22,21 @@ pub trait Bitpack: Clone {
     x.mut_xnor(other);
     return x;
   }
+
+  fn pretty_str(&self) -> String {
+    let mut v: Vec<String> = vec![];
+    for i in 0..Self::limit_index() {
+      v.push(if self.get(i) {
+        "1".to_owned()
+      } else {
+        "0".to_owned()
+      });
+      if (i % 10) == 9 {
+        v.push(" ".to_owned());
+      }
+    }
+    return v.concat();
+  }
 }
 
 impl Bitpack32 {

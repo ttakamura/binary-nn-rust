@@ -2,6 +2,7 @@ extern crate binary_nn;
 
 mod bitpack_tests {
   use binary_nn::backend::bitpack::*;
+  use binary_nn::backend::bitvec::*;
 
   #[test]
   fn bitpack_from_bool() {
@@ -126,5 +127,15 @@ mod bitpack_tests {
     assert_eq!(x.get(29), false);
     assert_eq!(x.get(30), true);
     assert_eq!(x.get(31), false);
+  }
+
+  #[test]
+  fn bitpack_pretty_str() {
+    let mut x = Bitpack32::falses();
+    x.set_true(0);
+    x.set_true(5);
+    x.set_true(29);
+    x.set_true(31);
+    assert_eq!(x.pretty_str(), "1000010000 0000000000 0000000001 01");
   }
 }
