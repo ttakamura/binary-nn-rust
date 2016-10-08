@@ -10,6 +10,12 @@ pub trait BitIterator
   where Self: Iterator<Item = Bitpack32>
 {
   fn bitlen(&self) -> u32;
+  //  fn or<I>(&self, other: I) -> I
+  //    where I: BitIterator<Item = Bitpack32>
+  //  {
+  //    let op = BitOpOr {};
+  //    return BitIterZip::new(op, self, other);
+  //  }
 }
 
 // ----------------------------------------------
@@ -31,7 +37,7 @@ impl BitOperation2 for BitOpOr {
 
 // ----------------------------------------------
 pub struct BitIterZip<I, O>
-  where I: BitIterator + Iterator,
+  where I: BitIterator,
         O: BitOperation2
 {
   op: O,
@@ -40,7 +46,7 @@ pub struct BitIterZip<I, O>
 }
 
 impl<I, O> Iterator for BitIterZip<I, O>
-  where I: BitIterator + Iterator<Item = Bitpack32>,
+  where I: BitIterator,
         O: BitOperation2
 {
   type Item = Bitpack32;
@@ -54,7 +60,7 @@ impl<I, O> Iterator for BitIterZip<I, O>
 }
 
 impl<I, O> BitIterZip<I, O>
-  where I: BitIterator + Iterator,
+  where I: BitIterator,
         O: BitOperation2
 {
   pub fn new(op: O, left: I, right: I) -> Self {
