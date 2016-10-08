@@ -56,6 +56,9 @@ impl<I, O> BitIterZip<I, O>
         O: BitOperation2
 {
   pub fn new(op: O, left: I, right: I) -> Self {
+    if left.bitlen() != right.bitlen() {
+      panic!("iter.bitlen should be the same length");
+    }
     BitIterZip {
       op: op,
       left: left,

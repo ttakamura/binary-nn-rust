@@ -1,9 +1,9 @@
 extern crate binary_nn;
 
 mod bitmatrix_vector_tests {
-  use binary_nn::backend::bitmatrix::*;
-  use binary_nn::backend::bitvec::*;
-  use binary_nn::backend::bitmatrix_trait::*;
+  // use binary_nn::backend::bitmatrix::*;
+  // use binary_nn::backend::bitvec::*;
+  // use binary_nn::backend::bitmatrix_trait::*;
 
   // fn prepare_matrix() -> BitMatrix2 {
   //   let mut x = BitMatrix2::falses((3, 34));
