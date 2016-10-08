@@ -48,7 +48,7 @@ mod bititer_tests {
     let x = BitVec::falses(34);
     let y = BitVec::falses(35);
     let op = BitOpOr {};
-    let zipper = BitIterZip::new(op, x.iter(), y.iter());
+    BitIterZip::new(op, x.iter(), y.iter());
   }
 
   #[test]

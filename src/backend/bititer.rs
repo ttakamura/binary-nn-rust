@@ -6,7 +6,9 @@ pub trait BitOperation2 {
   fn process(&self, left: Bitpack32, right: Bitpack32) -> Bitpack32;
 }
 
-pub trait BitIterator {
+pub trait BitIterator
+  where Self: Iterator<Item = Bitpack32>
+{
   fn bitlen(&self) -> u32;
 }
 

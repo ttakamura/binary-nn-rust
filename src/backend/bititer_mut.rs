@@ -16,11 +16,11 @@ impl<'a> Iterator for BitIterMut<'a> {
   }
 }
 
-impl<'a> BitIterator for BitIterMut<'a> {
-  fn bitlen(&self) -> u32 {
-    self.bitlen
-  }
-}
+// impl<'a> BitIterator for BitIterMut<'a> {
+//   fn bitlen(&self) -> u32 {
+//     self.bitlen
+//   }
+// }
 
 impl<'a> BitIterMut<'a> {
   pub fn new(iter: IterMut<Bitpack32>, bitlen: u32) -> BitIterMut {
@@ -28,6 +28,10 @@ impl<'a> BitIterMut<'a> {
       raw: iter,
       bitlen: bitlen,
     }
+  }
+
+  pub fn bitlen(&self) -> u32 {
+    self.bitlen
   }
 
   pub fn union(&mut self, other: BitIter) {
