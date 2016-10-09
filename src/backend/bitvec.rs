@@ -3,7 +3,6 @@ use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
 use backend::bititer::*;
 use backend::bititer_mut::*;
-use std::iter::FromIterator;
 
 #[derive(Debug)]
 pub struct BitVec {
@@ -65,13 +64,6 @@ impl BitVec {
       vec.push(Bitpack32::falses());
     }
     return BitVec::new(vec, nbits);
-  }
-
-  pub fn union(&self, other: &Self) -> Self {
-    let xi = self.iter();
-    let yi = other.iter();
-    let storage = Vec::from_iter(xi.union(&yi));
-    return BitVec::new(storage, self.nbits);
   }
 
   #[inline]

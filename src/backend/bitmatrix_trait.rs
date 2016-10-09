@@ -1,11 +1,27 @@
 use std::cmp::PartialEq;
+use std::iter::FromIterator;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bititer::*;
 use backend::bititer_mut::*;
 
-pub trait BitMatrix {
-  type Index: PartialEq;
+pub trait BitMatrix
+  where Self: Sized
+{
+  type Index: PartialEq + Clone;
+
+  fn fusion<F>(&self, other: &Self, f: F) -> Self
+    where F: Fn(&BitIter, &BitIter) -> Vec<Bitpack32>
+  {
+    let xi = self.iter();
+    let yi = other.iter();
+    let storage = f(&xi, &yi);
+    return Self::new(storage, self.len().clone());
+  }
+
+  fn union(&self, other: &Self) -> Self {
+    self.fusion(other, |xi, yi| Vec::from_iter(xi.union(&yi)))
+  }
 
   fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
