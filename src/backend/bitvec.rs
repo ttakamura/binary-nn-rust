@@ -14,6 +14,13 @@ pub struct BitVec {
 impl BitMatrix for BitVec {
   type Index = u32;
 
+  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> BitVec {
+    return BitVec {
+      storage: vec,
+      nbits: nbits,
+    };
+  }
+
   fn offset_of(&self, index: Self::Index) -> (u32, u32) {
     if index >= self.nbits {
       panic!("index should smaller than self.nbits")
@@ -52,13 +59,6 @@ impl BitMatrixMut for BitVec {
 }
 
 impl BitVec {
-  pub fn new(vec: Vec<Bitpack32>, nbits: u32) -> BitVec {
-    return BitVec {
-      storage: vec,
-      nbits: nbits,
-    };
-  }
-
   pub fn falses(nbits: <BitVec as BitMatrix>::Index) -> Self {
     let mut vec: Vec<Bitpack32> = vec![];
     for _ in 0..BitVec::block_num_of(nbits) {

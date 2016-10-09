@@ -13,6 +13,13 @@ pub struct BitMatrix2 {
 impl BitMatrix for BitMatrix2 {
   type Index = (u32, u32);
 
+  fn new(vec: Vec<Bitpack32>, nbits: Self::Index) -> Self {
+    return BitMatrix2 {
+      storage: vec,
+      nbits: nbits,
+    };
+  }
+
   fn offset_of(&self, index: Self::Index) -> (u32, u32) {
     let (nrow, ncol) = self.nbits;
     let (irow, icol) = index;
@@ -55,13 +62,6 @@ impl BitMatrixMut for BitMatrix2 {
 }
 
 impl BitMatrix2 {
-  pub fn new(vec: Vec<Bitpack32>, nbits: <BitMatrix2 as BitMatrix>::Index) -> Self {
-    return BitMatrix2 {
-      storage: vec,
-      nbits: nbits,
-    };
-  }
-
   pub fn falses(nbits: <BitMatrix2 as BitMatrix>::Index) -> Self {
     let (nrow, ncol) = nbits;
     let block_num = nrow * BitMatrix2::block_per_row_of(ncol);

@@ -21,6 +21,7 @@ pub trait BitMatrix {
   fn block_len(&self) -> u32;
   fn as_slice(&self) -> &[Bitpack32];
   fn iter(&self) -> BitIter;
+  fn new(storage: Vec<Bitpack32>, nbits: Self::Index) -> Self;
 }
 
 pub trait BitMatrixMut: BitMatrix {
