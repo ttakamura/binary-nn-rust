@@ -121,4 +121,20 @@ mod bitvec_tests {
     assert_eq!(x.get(32), false);
     assert_eq!(x.get(33), true);
   }
+
+  #[test]
+  fn bitvec_union() {
+    let mut x = BitVec::falses(34);
+    let mut y = BitVec::falses(34);
+    x.set_true(30);
+    x.set_true(31);
+    y.set_true(31);
+    y.set_true(32);
+    let z = x.union(&y);
+    assert_eq!(z.get(0), false);
+    assert_eq!(z.get(30), true);
+    assert_eq!(z.get(31), true);
+    assert_eq!(z.get(32), true);
+    assert_eq!(z.get(33), false);
+  }
 }
