@@ -2,23 +2,24 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use std::slice::Iter;
 
-pub trait BitOperation2 {
+pub trait BitOperation2
+  where Self: Clone
+{
   fn process(&self, left: Bitpack32, right: Bitpack32) -> Bitpack32;
 }
 
 pub trait BitIterator
-  where Self: Iterator<Item = Bitpack32>
+  where Self: Iterator<Item = Bitpack32> + Sized + Clone
 {
   fn bitlen(&self) -> u32;
-  //  fn or<I>(&self, other: I) -> I
-  //    where I: BitIterator<Item = Bitpack32>
-  //  {
-  //    let op = BitOpOr {};
-  //    return BitIterZip::new(op, self, other);
-  //  }
+  fn or(&self, other: &Self) -> BitIterZip<Self, BitOpOr> {
+    let op = BitOpOr {};
+    return BitIterZip::new(op, self.clone(), other.clone());
+  }
 }
 
 // ----------------------------------------------
+#[derive(Clone)]
 pub struct BitOpXnor;
 
 impl BitOperation2 for BitOpXnor {
@@ -27,6 +28,7 @@ impl BitOperation2 for BitOpXnor {
   }
 }
 
+#[derive(Clone)]
 pub struct BitOpOr;
 
 impl BitOperation2 for BitOpOr {
@@ -43,6 +45,15 @@ pub struct BitIterZip<I, O>
   op: O,
   left: I,
   right: I,
+}
+
+impl<I, O> Clone for BitIterZip<I, O>
+  where I: BitIterator,
+        O: BitOperation2
+{
+  fn clone(&self) -> Self {
+    BitIterZip::new(self.op.clone(), self.left.clone(), self.right.clone())
+  }
 }
 
 impl<I, O> Iterator for BitIterZip<I, O>
@@ -79,6 +90,12 @@ impl<I, O> BitIterZip<I, O>
 pub struct BitIter<'a> {
   raw: Iter<'a, Bitpack32>,
   bitlen: u32,
+}
+
+impl<'a> Clone for BitIter<'a> {
+  fn clone(&self) -> Self {
+    BitIter::new(self.raw.clone(), self.bitlen.clone())
+  }
 }
 
 impl<'a> Iterator for BitIter<'a> {

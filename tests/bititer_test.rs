@@ -52,10 +52,9 @@ mod bititer_tests {
   }
 
   #[test]
-  fn bitzip_or() {
+  fn bititer_or() {
     let (x, y) = prepare_vector();
-    let op = BitOpOr {};
-    let mut zipper = BitIterZip::new(op, x.iter(), y.iter());
+    let mut zipper = x.iter().or(&y.iter());
     let fst = zipper.next().unwrap();
     let snd = zipper.next().unwrap();
     assert_eq!(fst.pretty_str(), "0000000000 0000000000 0000000001 10");
