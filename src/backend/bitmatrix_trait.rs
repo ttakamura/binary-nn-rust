@@ -23,6 +23,10 @@ pub trait BitMatrix
     self.fusion(other, |xi, yi| Vec::from_iter(xi.union(&yi)))
   }
 
+  fn xnor(&self, other: &Self) -> Self {
+    self.fusion(other, |xi, yi| Vec::from_iter(xi.xnor(&yi)))
+  }
+
   fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
     return self.block(w).get(b);

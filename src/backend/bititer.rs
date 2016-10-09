@@ -11,11 +11,17 @@ pub trait BitOperation2
 pub trait BitIterator
   where Self: Iterator<Item = Bitpack32> + Sized + Clone
 {
-  fn bitlen(&self) -> u32;
   fn union(&self, other: &Self) -> BitIterZip<Self, BitOpUnion> {
     let op = BitOpUnion {};
     return BitIterZip::new(op, self.clone(), other.clone());
   }
+
+  fn xnor(&self, other: &Self) -> BitIterZip<Self, BitOpXnor> {
+    let op = BitOpXnor {};
+    return BitIterZip::new(op, self.clone(), other.clone());
+  }
+
+  fn bitlen(&self) -> u32;
 }
 
 // ----------------------------------------------

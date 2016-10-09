@@ -137,4 +137,20 @@ mod bitvec_tests {
     assert_eq!(z.get(32), true);
     assert_eq!(z.get(33), false);
   }
+
+  #[test]
+  fn bitvec_xnor() {
+    let mut x = BitVec::falses(34);
+    let mut y = BitVec::falses(34);
+    x.set_true(30);
+    x.set_true(31);
+    y.set_true(31);
+    y.set_true(32);
+    let z = x.xnor(&y);
+    assert_eq!(z.get(0), true);
+    assert_eq!(z.get(30), false);
+    assert_eq!(z.get(31), true);
+    assert_eq!(z.get(32), false);
+    assert_eq!(z.get(33), true);
+  }
 }
