@@ -130,7 +130,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    let z = x.union(&y);
+    let z = BitVec::from_iter(x.union(&y));
     assert_eq!(z.get(0), false);
     assert_eq!(z.get(30), true);
     assert_eq!(z.get(31), true);
@@ -146,7 +146,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    let z = x.xnor(&y);
+    let z = BitVec::from_iter(x.xnor(&y));
     assert_eq!(z.get(0), true);
     assert_eq!(z.get(30), false);
     assert_eq!(z.get(31), true);

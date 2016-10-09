@@ -11,6 +11,8 @@ pub trait BitOperation2
 pub trait BitIterator
   where Self: Iterator<Item = Bitpack32> + Sized + Clone
 {
+  type Index: PartialEq + Clone;
+
   fn union(&self, other: &Self) -> BitIterZip<Self, BitOpUnion> {
     let op = BitOpUnion {};
     return BitIterZip::new(op, self.clone(), other.clone());
@@ -21,7 +23,7 @@ pub trait BitIterator
     return BitIterZip::new(op, self.clone(), other.clone());
   }
 
-  fn bitlen(&self) -> u32;
+  fn nbits(&self) -> Self::Index;
 }
 
 // ----------------------------------------------
@@ -76,13 +78,24 @@ impl<I, O> Iterator for BitIterZip<I, O>
   }
 }
 
+impl<I, O> BitIterator for BitIterZip<I, O>
+  where I: BitIterator,
+        O: BitOperation2
+{
+  type Index = I::Index;
+
+  fn nbits(&self) -> I::Index {
+    self.left.nbits()
+  }
+}
+
 impl<I, O> BitIterZip<I, O>
   where I: BitIterator,
         O: BitOperation2
 {
   pub fn new(op: O, left: I, right: I) -> Self {
-    if left.bitlen() != right.bitlen() {
-      panic!("iter.bitlen should be the same length");
+    if left.nbits() != right.nbits() {
+      panic!("iter.nbits should be the same length");
     }
     BitIterZip {
       op: op,
@@ -95,18 +108,17 @@ impl<I, O> BitIterZip<I, O>
 // ----------------------------------------------
 pub struct BitIter<'a> {
   raw: Iter<'a, Bitpack32>,
-  bitlen: u32,
+  nbits: u32,
 }
 
 impl<'a> Clone for BitIter<'a> {
   fn clone(&self) -> Self {
-    BitIter::new(self.raw.clone(), self.bitlen.clone())
+    BitIter::new(self.raw.clone(), self.nbits.clone())
   }
 }
 
 impl<'a> Iterator for BitIter<'a> {
   type Item = Bitpack32;
-
   fn next(&mut self) -> Option<Self::Item> {
     match self.raw.next() {
       Some(x) => Some(x.clone()),
@@ -116,16 +128,18 @@ impl<'a> Iterator for BitIter<'a> {
 }
 
 impl<'a> BitIterator for BitIter<'a> {
-  fn bitlen(&self) -> u32 {
-    self.bitlen
+  type Index = u32;
+
+  fn nbits(&self) -> Self::Index {
+    self.nbits
   }
 }
 
 impl<'a> BitIter<'a> {
-  pub fn new(iter: Iter<Bitpack32>, bitlen: u32) -> BitIter {
+  pub fn new(iter: Iter<Bitpack32>, nbits: u32) -> BitIter {
     BitIter {
       raw: iter,
-      bitlen: bitlen,
+      nbits: nbits,
     }
   }
 }

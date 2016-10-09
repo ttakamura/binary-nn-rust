@@ -10,21 +10,19 @@ pub trait BitMatrix
 {
   type Index: PartialEq + Clone;
 
-  fn fusion<F>(&self, other: &Self, f: F) -> Self
-    where F: Fn(&BitIter, &BitIter) -> Vec<Bitpack32>
+  fn from_iter<I>(iter: I) -> Self
+    where I: BitIterator<Item = Bitpack32, Index = Self::Index>
   {
-    let xi = self.iter();
-    let yi = other.iter();
-    let storage = f(&xi, &yi);
-    return Self::new(storage, self.len().clone());
+    let idx = iter.nbits().clone();
+    Self::new(Vec::from_iter(iter), idx)
   }
 
-  fn union(&self, other: &Self) -> Self {
-    self.fusion(other, |xi, yi| Vec::from_iter(xi.union(&yi)))
+  fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitOpUnion> {
+    self.iter().union(&other.iter())
   }
 
-  fn xnor(&self, other: &Self) -> Self {
-    self.fusion(other, |xi, yi| Vec::from_iter(xi.xnor(&yi)))
+  fn xnor<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitOpXnor> {
+    self.iter().xnor(&other.iter())
   }
 
   fn get(&self, index: Self::Index) -> bool {
