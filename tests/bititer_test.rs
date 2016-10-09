@@ -47,14 +47,14 @@ mod bititer_tests {
   fn bitzip_new_panic() {
     let x = BitVec::falses(34);
     let y = BitVec::falses(35);
-    let op = BitOpOr {};
+    let op = BitOpUnion {};
     BitIterZip::new(op, x.iter(), y.iter());
   }
 
   #[test]
-  fn bititer_or() {
+  fn bititer_union() {
     let (x, y) = prepare_vector();
-    let mut zipper = x.iter().or(&y.iter());
+    let mut zipper = x.iter().union(&y.iter());
     let fst = zipper.next().unwrap();
     let snd = zipper.next().unwrap();
     assert_eq!(fst.pretty_str(), "0000000000 0000000000 0000000001 10");

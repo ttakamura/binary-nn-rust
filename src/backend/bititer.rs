@@ -12,8 +12,8 @@ pub trait BitIterator
   where Self: Iterator<Item = Bitpack32> + Sized + Clone
 {
   fn bitlen(&self) -> u32;
-  fn or(&self, other: &Self) -> BitIterZip<Self, BitOpOr> {
-    let op = BitOpOr {};
+  fn union(&self, other: &Self) -> BitIterZip<Self, BitOpUnion> {
+    let op = BitOpUnion {};
     return BitIterZip::new(op, self.clone(), other.clone());
   }
 }
@@ -29,9 +29,9 @@ impl BitOperation2 for BitOpXnor {
 }
 
 #[derive(Clone)]
-pub struct BitOpOr;
+pub struct BitOpUnion;
 
-impl BitOperation2 for BitOpOr {
+impl BitOperation2 for BitOpUnion {
   fn process(&self, left: Bitpack32, right: Bitpack32) -> Bitpack32 {
     left.union(&right)
   }

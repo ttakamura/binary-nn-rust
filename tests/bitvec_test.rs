@@ -59,7 +59,7 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_union() {
+  fn bitvec_mut_union() {
     let mut x = BitVec::falses(34);
     let mut y = BitVec::falses(34);
     x.set_true(30);
@@ -75,7 +75,7 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_intersect() {
+  fn bitvec_mut_intersect() {
     let mut x = BitVec::falses(34);
     let mut y = BitVec::falses(34);
     x.set_true(30);
@@ -91,7 +91,7 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_xor() {
+  fn bitvec_mut_xor() {
     let mut x = BitVec::falses(34);
     let mut y = BitVec::falses(34);
     x.set_true(30);
@@ -107,7 +107,7 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_xnor() {
+  fn bitvec_mut_xnor() {
     let mut x = BitVec::falses(34);
     let mut y = BitVec::falses(34);
     x.set_true(30);
