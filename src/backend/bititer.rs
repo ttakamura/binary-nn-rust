@@ -13,17 +13,22 @@ pub trait BitIterator
 {
   type Index: PartialEq + Clone;
 
-  fn union(&self, other: &Self) -> BitIterZip<Self, BitOpUnion> {
+  fn union<I>(&self, other: &I) -> BitIterZip<Self, I, BitOpUnion>
+    where I: BitIterator<Item = Bitpack32, Index = Self::Index>
+  {
     let op = BitOpUnion {};
     return BitIterZip::new(op, self.clone(), other.clone());
   }
 
-  fn xnor(&self, other: &Self) -> BitIterZip<Self, BitOpXnor> {
+  fn xnor<I>(&self, other: &I) -> BitIterZip<Self, I, BitOpXnor>
+    where I: BitIterator<Item = Bitpack32, Index = Self::Index>
+  {
     let op = BitOpXnor {};
     return BitIterZip::new(op, self.clone(), other.clone());
   }
 
-  fn nbits(&self) -> Self::Index;
+  fn shape(&self) -> Self::Index;
+  fn nbits(&self) -> u32;
 }
 
 // ----------------------------------------------
@@ -46,17 +51,19 @@ impl BitOperation2 for BitOpUnion {
 }
 
 // ----------------------------------------------
-pub struct BitIterZip<I, O>
-  where I: BitIterator,
+pub struct BitIterZip<IL, IR, O>
+  where IL: BitIterator,
+        IR: BitIterator,
         O: BitOperation2
 {
   op: O,
-  left: I,
-  right: I,
+  left: IL,
+  right: IR,
 }
 
-impl<I, O> Clone for BitIterZip<I, O>
-  where I: BitIterator,
+impl<IL, IR, O> Clone for BitIterZip<IL, IR, O>
+  where IL: BitIterator,
+        IR: BitIterator,
         O: BitOperation2
 {
   fn clone(&self) -> Self {
@@ -64,8 +71,9 @@ impl<I, O> Clone for BitIterZip<I, O>
   }
 }
 
-impl<I, O> Iterator for BitIterZip<I, O>
-  where I: BitIterator,
+impl<IL, IR, O> Iterator for BitIterZip<IL, IR, O>
+  where IL: BitIterator,
+        IR: BitIterator,
         O: BitOperation2
 {
   type Item = Bitpack32;
@@ -78,22 +86,28 @@ impl<I, O> Iterator for BitIterZip<I, O>
   }
 }
 
-impl<I, O> BitIterator for BitIterZip<I, O>
-  where I: BitIterator,
+impl<IL, IR, O> BitIterator for BitIterZip<IL, IR, O>
+  where IL: BitIterator,
+        IR: BitIterator,
         O: BitOperation2
 {
-  type Index = I::Index;
+  type Index = IL::Index;
 
-  fn nbits(&self) -> I::Index {
+  fn shape(&self) -> IL::Index {
+    self.left.shape()
+  }
+
+  fn nbits(&self) -> u32 {
     self.left.nbits()
   }
 }
 
-impl<I, O> BitIterZip<I, O>
-  where I: BitIterator,
+impl<IL, IR, O> BitIterZip<IL, IR, O>
+  where IL: BitIterator,
+        IR: BitIterator,
         O: BitOperation2
 {
-  pub fn new(op: O, left: I, right: I) -> Self {
+  pub fn new(op: O, left: IL, right: IR) -> Self {
     if left.nbits() != right.nbits() {
       panic!("iter.nbits should be the same length");
     }
@@ -130,7 +144,11 @@ impl<'a> Iterator for BitIter<'a> {
 impl<'a> BitIterator for BitIter<'a> {
   type Index = u32;
 
-  fn nbits(&self) -> Self::Index {
+  fn shape(&self) -> Self::Index {
+    self.nbits
+  }
+
+  fn nbits(&self) -> u32 {
     self.nbits
   }
 }

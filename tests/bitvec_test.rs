@@ -1,6 +1,7 @@
 extern crate binary_nn;
 
 mod bitvec_tests {
+  use binary_nn::backend::bititer::*;
   use binary_nn::backend::bitvec::*;
   use binary_nn::backend::bitpack::Bitpack32;
   use binary_nn::backend::bitmatrix_trait::*;
@@ -125,13 +126,21 @@ mod bitvec_tests {
   #[test]
   fn bitvec_union() {
     let mut x = BitVec::falses(34);
-    let mut y = BitVec::falses(34);
+    let mut a = BitVec::falses(34);
+    let mut b = BitVec::falses(34);
+    x.set_true(10);
     x.set_true(30);
     x.set_true(31);
-    y.set_true(31);
-    y.set_true(32);
-    let z = BitVec::from_iter(x.union(&y));
+    a.set_true(31);
+    a.set_true(32);
+    b.set_true(10);
+    b.set_true(11);
+    let z = BitVec::from_iter(x.union(&a).union(&b.iter()));
     assert_eq!(z.get(0), false);
+    assert_eq!(z.get(9), false);
+    assert_eq!(z.get(10), true);
+    assert_eq!(z.get(11), true);
+    assert_eq!(z.get(12), false);
     assert_eq!(z.get(30), true);
     assert_eq!(z.get(31), true);
     assert_eq!(z.get(32), true);

@@ -13,15 +13,15 @@ pub trait BitMatrix
   fn from_iter<I>(iter: I) -> Self
     where I: BitIterator<Item = Bitpack32, Index = Self::Index>
   {
-    let idx = iter.nbits().clone();
+    let idx = iter.shape().clone();
     Self::new(Vec::from_iter(iter), idx)
   }
 
-  fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitOpUnion> {
+  fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpUnion> {
     self.iter().union(&other.iter())
   }
 
-  fn xnor<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitOpXnor> {
+  fn xnor<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpXnor> {
     self.iter().xnor(&other.iter())
   }
 
