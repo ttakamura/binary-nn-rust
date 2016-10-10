@@ -35,7 +35,7 @@ mod bititer_tests {
 
   #[test]
   fn bitzip_new() {
-    let (mut x, y) = prepare_vector();
+    let (_, y) = prepare_vector();
     let yi = y.iter();
     assert_eq!(yi.nbits(), 34);
   }
