@@ -138,4 +138,16 @@ mod bitpack_tests {
     x.set_true(31);
     assert_eq!(x.pretty_str(), "1000010000 0000000000 0000000001 01");
   }
+
+  #[test]
+  fn bitpack_count_ones() {
+    let mut x = Bitpack32::falses();
+    assert_eq!(x.count_ones(), 0);
+    x.set_true(0);
+    assert_eq!(x.count_ones(), 1);
+    x.set_true(5);
+    assert_eq!(x.count_ones(), 2);
+    x.set_true(31);
+    assert_eq!(x.count_ones(), 3);
+  }
 }

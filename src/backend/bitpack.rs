@@ -14,6 +14,7 @@ pub trait Bitpack: Clone {
   fn mut_intersect(&mut self, other: &Self);
   fn mut_xor(&mut self, other: &Self);
   fn mut_xnor(&mut self, other: &Self);
+  fn count_ones(&self) -> u32;
 
   fn xnor(&self, other: &Self) -> Self
     where Self: Sized
@@ -102,6 +103,10 @@ impl Bitpack for Bitpack32 {
 
   fn mut_xnor(&mut self, other: &Bitpack32) {
     self.storage = !(self.storage ^ other.storage);
+  }
+
+  fn count_ones(&self) -> u32 {
+    self.storage.count_ones()
   }
 }
 

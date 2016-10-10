@@ -59,4 +59,18 @@ mod bititer_tests {
     assert_eq!(snd.pretty_str(), "0100000000 0000000000 0000000000 00");
     assert_eq!(zipper.next().is_none(), true);
   }
+
+  #[test]
+  fn bititer_count_ones() {
+    let (mut x, y) = prepare_vector();
+    {
+      let z = x.iter().union(&y.iter());
+      assert_eq!(z.count_ones(), 3);
+    }
+    x.set_true(32);
+    {
+      let z = x.iter().union(&y.iter());
+      assert_eq!(z.count_ones(), 4);
+    }
+  }
 }
