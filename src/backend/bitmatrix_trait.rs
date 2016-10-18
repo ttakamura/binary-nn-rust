@@ -10,13 +10,6 @@ pub trait BitMatrix
 {
   type Index: PartialEq + Clone;
 
-  fn from_iter<I>(iter: I) -> Self
-    where I: BitIterator<Item = Bitpack32, Index = Self::Index>
-  {
-    let idx = iter.shape().clone();
-    Self::new(Vec::from_iter(iter), idx)
-  }
-
   fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpUnion> {
     self.iter().union(&other.iter())
   }

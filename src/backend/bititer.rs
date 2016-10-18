@@ -11,17 +11,15 @@ pub trait BitOperation2
 pub trait BitIterator
   where Self: Iterator<Item = Bitpack32> + Sized + Clone
 {
-  type Index: PartialEq + Clone;
-
   fn union<I>(&self, other: &I) -> BitIterZip<Self, I, BitOpUnion>
-    where I: BitIterator<Item = Bitpack32, Index = Self::Index>
+    where I: BitIterator<Item = Bitpack32>
   {
     let op = BitOpUnion {};
     return BitIterZip::new(op, self.clone(), other.clone());
   }
 
   fn xnor<I>(&self, other: &I) -> BitIterZip<Self, I, BitOpXnor>
-    where I: BitIterator<Item = Bitpack32, Index = Self::Index>
+    where I: BitIterator<Item = Bitpack32>
   {
     let op = BitOpXnor {};
     return BitIterZip::new(op, self.clone(), other.clone());
@@ -31,7 +29,6 @@ pub trait BitIterator
     self.clone().fold(0, |acc, x| acc + x.count_ones())
   }
 
-  fn shape(&self) -> Self::Index;
   fn nbits(&self) -> u32;
 }
 
@@ -95,12 +92,6 @@ impl<IL, IR, O> BitIterator for BitIterZip<IL, IR, O>
         IR: BitIterator,
         O: BitOperation2
 {
-  type Index = IL::Index;
-
-  fn shape(&self) -> IL::Index {
-    self.left.shape()
-  }
-
   fn nbits(&self) -> u32 {
     self.left.nbits()
   }
@@ -146,12 +137,6 @@ impl<'a> Iterator for BitIter<'a> {
 }
 
 impl<'a> BitIterator for BitIter<'a> {
-  type Index = u32;
-
-  fn shape(&self) -> Self::Index {
-    self.nbits
-  }
-
   fn nbits(&self) -> u32 {
     self.nbits
   }

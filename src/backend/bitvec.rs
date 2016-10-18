@@ -66,6 +66,13 @@ impl BitVec {
     return BitVec::new(vec, nbits);
   }
 
+  pub fn from_iter<I>(iter: I) -> Self
+    where I: BitIterator<Item = Bitpack32>
+  {
+    let nbits = iter.nbits().clone();
+    Self::new(Vec::from_iter(iter), nbits)
+  }
+
   #[inline]
   fn block_num(&self) -> u32 {
     return BitVec::block_num_of(self.nbits);
