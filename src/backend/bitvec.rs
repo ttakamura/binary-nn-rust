@@ -1,3 +1,4 @@
+use std::iter::FromIterator;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
