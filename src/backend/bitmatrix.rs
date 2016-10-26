@@ -61,7 +61,7 @@ impl BitMatrix2 {
     return BitMatrix2::new(vec, nbits);
   }
 
-  pub fn row_iter(&self, irow: u32) -> BitIter {
+  pub fn row_iter(&self, irow: u32) -> BitIter<u32> {
     let (_, ncol) = self.nbits;
     let (w, _) = self.offset_of((irow, 0));
     let ew = w + self.block_per_row();
@@ -69,7 +69,7 @@ impl BitMatrix2 {
     return BitIter::new(slice.into_iter(), ncol);
   }
 
-  fn iter(&self) -> BitIter {
+  fn iter(&self) -> BitIter<(u32, u32)> {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 

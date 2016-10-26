@@ -58,9 +58,9 @@ impl BitVec {
   }
 
   pub fn from_iter<I>(iter: I) -> Self
-    where I: BitIterator<Item = Bitpack32>
+    where I: BitIterator<Item = Bitpack32, Index = u32>
   {
-    let nbits = iter.nbits().clone();
+    let nbits = iter.shape().clone();
     Self::new(Vec::from_iter(iter), nbits)
   }
 
