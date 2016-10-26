@@ -41,20 +41,11 @@ impl BitMatrix for BitVec {
   fn as_slice(&self) -> &[Bitpack32] {
     self.storage.as_slice()
   }
-
-  fn iter(&self) -> BitIter {
-    return BitIter::new(self.as_slice().into_iter(), self.nbits);
-  }
 }
 
 impl BitMatrixMut for BitVec {
   fn as_mut_slice(&mut self) -> &mut [Bitpack32] {
     self.storage.as_mut_slice()
-  }
-
-  fn mut_iter(&mut self) -> BitIterMut {
-    let nbits = self.nbits;
-    return BitIterMut::new(self.as_mut_slice().into_iter(), nbits);
   }
 }
 
@@ -72,6 +63,15 @@ impl BitVec {
   {
     let nbits = iter.nbits().clone();
     Self::new(Vec::from_iter(iter), nbits)
+  }
+
+  fn iter(&self) -> BitIter {
+    return BitIter::new(self.as_slice().into_iter(), self.nbits);
+  }
+
+  fn mut_iter(&mut self) -> BitIterMut {
+    let nbits = self.nbits;
+    return BitIterMut::new(self.as_mut_slice().into_iter(), nbits);
   }
 
   #[inline]

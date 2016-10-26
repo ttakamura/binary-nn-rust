@@ -9,13 +9,13 @@ pub trait BitMatrix
 {
   type Index: PartialEq + Clone;
 
-  fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpUnion> {
-    self.iter().union(&other.iter())
-  }
-
-  fn xnor<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpXnor> {
-    self.iter().xnor(&other.iter())
-  }
+  // fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpUnion> {
+  //   self.iter().union(&other.iter())
+  // }
+  //
+  // fn xnor<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpXnor> {
+  //   self.iter().xnor(&other.iter())
+  // }
 
   fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
@@ -30,7 +30,6 @@ pub trait BitMatrix
   fn len(&self) -> Self::Index;
   fn block_len(&self) -> u32;
   fn as_slice(&self) -> &[Bitpack32];
-  fn iter(&self) -> BitIter;
   fn new(storage: Vec<Bitpack32>, nbits: Self::Index) -> Self;
 }
 
@@ -50,5 +49,4 @@ pub trait BitMatrixMut: BitMatrix {
   }
 
   fn as_mut_slice(&mut self) -> &mut [Bitpack32];
-  fn mut_iter(&mut self) -> BitIterMut;
 }

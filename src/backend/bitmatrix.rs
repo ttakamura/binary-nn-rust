@@ -43,21 +43,11 @@ impl BitMatrix for BitMatrix2 {
   fn as_slice(&self) -> &[Bitpack32] {
     &self.storage[..]
   }
-
-  fn iter(&self) -> BitIter {
-    let (nrow, ncol) = self.nbits;
-    return BitIter::new(self.as_slice().into_iter(), nrow * ncol);
-  }
 }
 
 impl BitMatrixMut for BitMatrix2 {
   fn as_mut_slice(&mut self) -> &mut [Bitpack32] {
     &mut self.storage[..]
-  }
-
-  fn mut_iter(&mut self) -> BitIterMut {
-    let (nrow, ncol) = self.nbits;
-    return BitIterMut::new(self.as_mut_slice().into_iter(), nrow * ncol);
   }
 }
 
@@ -72,17 +62,27 @@ impl BitMatrix2 {
     return BitMatrix2::new(vec, nbits);
   }
 
-  // TODO
-  // pub fn row_iter(&self, irow: u32) -> BitIter {
-  //   let (w, _) = self.offset_of((irow, 0));
-  //   return BitIter::new(self.as_slice(), w, self.block_per_row(), 1, 1);
-  // }
-  //
+  pub fn row_iter(&self, irow: u32) -> BitIter {
+    let (_, ncol) = self.nbits;
+    let (w, _) = self.offset_of((irow, 0));
+    let ew = w + self.block_per_row();
+    let slice = &self.storage[w as usize..ew as usize];
+    return BitIter::new(slice.into_iter(), ncol);
+  }
+
   // pub fn mut_row_iter(&mut self, irow: u32) -> BitIterMut {
   //   let (w, _) = self.offset_of((irow, 0));
   //   let length = self.block_per_row();
   //   return BitIterMut::new(self.as_mut_slice(), w, length, 1, 1);
   // }
+
+  fn iter(&self) -> BitIter {
+    return BitIter::new(self.as_slice().into_iter(), self.nbits);
+  }
+
+  fn mut_iter(&mut self) -> BitIterMut {
+    return BitIterMut::new(self.as_mut_slice().into_iter(), self.nbits);
+  }
 
   #[inline]
   fn block_per_row(&self) -> u32 {
