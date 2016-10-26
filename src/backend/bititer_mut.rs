@@ -3,9 +3,9 @@ use backend::bitpack::Bitpack;
 use backend::bititer::*;
 use std::slice::IterMut;
 
-pub struct BitIterMut<'a> {
+pub struct BitIterMut<'a, I> {
   raw: IterMut<'a, Bitpack32>,
-  bitlen: u32,
+  shape: I,
 }
 
 impl<'a> Iterator for BitIterMut<'a> {
@@ -15,12 +15,6 @@ impl<'a> Iterator for BitIterMut<'a> {
     self.raw.next()
   }
 }
-
-// impl<'a> BitIterator for BitIterMut<'a> {
-//   fn bitlen(&self) -> u32 {
-//     self.bitlen
-//   }
-// }
 
 impl<'a> BitIterMut<'a> {
   pub fn new(iter: IterMut<Bitpack32>, bitlen: u32) -> BitIterMut {
