@@ -2,7 +2,6 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
 use backend::bititer::*;
-use backend::bititer_mut::*;
 
 #[derive(Debug)]
 pub struct BitMatrix2 {
@@ -70,18 +69,8 @@ impl BitMatrix2 {
     return BitIter::new(slice.into_iter(), ncol);
   }
 
-  // pub fn mut_row_iter(&mut self, irow: u32) -> BitIterMut {
-  //   let (w, _) = self.offset_of((irow, 0));
-  //   let length = self.block_per_row();
-  //   return BitIterMut::new(self.as_mut_slice(), w, length, 1, 1);
-  // }
-
   fn iter(&self) -> BitIter {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
-  }
-
-  fn mut_iter(&mut self) -> BitIterMut {
-    return BitIterMut::new(self.as_mut_slice().into_iter(), self.nbits);
   }
 
   #[inline]

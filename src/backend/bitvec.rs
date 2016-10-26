@@ -3,7 +3,6 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
 use backend::bititer::*;
-use backend::bititer_mut::*;
 
 #[derive(Debug)]
 pub struct BitVec {
@@ -67,11 +66,6 @@ impl BitVec {
 
   fn iter(&self) -> BitIter<u32> {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
-  }
-
-  fn mut_iter(&mut self) -> BitIterMut {
-    let nbits = self.nbits;
-    return BitIterMut::new(self.as_mut_slice().into_iter(), nbits);
   }
 
   #[inline]
