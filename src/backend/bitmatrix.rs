@@ -81,6 +81,20 @@ impl BitMatrix2 {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 
+  // pub fn count_ones(&self) -> u32 {
+  //   let mut total = 0;
+  //   let (last_block_index, last_bit_index) = self.offset_of(self.nbits - 1);
+  //   let last_check = last_block_index as usize;
+  //   for (index, x) in self.storage.iter().enumerate() {
+  //     if index == last_check {
+  //       total += x.mask(last_bit_index).count_ones();
+  //     } else {
+  //       total += x.count_ones();
+  //     }
+  //   }
+  //   return total;
+  // }
+
   #[inline]
   fn block_per_row(&self) -> u32 {
     let (_, ncol) = self.nbits;
