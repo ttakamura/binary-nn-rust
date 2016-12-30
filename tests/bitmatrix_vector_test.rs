@@ -21,7 +21,7 @@ mod bitmatrix_vector_tests {
 
   #[test]
   fn bitmatrix_row_vec_union() {
-    let (mut x, y) = prepare_matrix();
+    let (x, y) = prepare_matrix();
     let z0 = BitVec::from_iter(x.row_iter(0).union(&y.iter()));
     assert_eq!(z0.get(9), true);
     assert_eq!(z0.get(10), true);
@@ -40,7 +40,7 @@ mod bitmatrix_vector_tests {
 
   #[test]
   fn bitmatrix_row_vec_xnor() {
-    let (mut x, y) = prepare_matrix();
+    let (x, y) = prepare_matrix();
     let z1 = BitVec::from_iter(x.row_iter(1).xnor(&y.iter()));
     assert_eq!(z1.get(9), true);
     assert_eq!(z1.get(10), false);
@@ -52,7 +52,7 @@ mod bitmatrix_vector_tests {
 
   #[test]
   fn bitmatrix_row_vec_dot() {
-    let (mut x, y) = prepare_matrix();
+    let (x, y) = prepare_matrix();
     let z = BitVec::from_iter(x.row_iter(1).xnor(&y.iter()));
     assert_eq!(z.block(0).pretty_str(),
                "1111111111 0111111111 1111111111 10");

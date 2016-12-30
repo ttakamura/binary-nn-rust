@@ -29,7 +29,7 @@ mod bitmatrix_tests {
 
   #[test]
   fn bitmatrix_union() {
-    let (mut x, y) = prepare_matrix_for_union();
+    let (x, y) = prepare_matrix_for_union();
     let z = BitMatrix2::from_iter(x.iter().union(&y.iter()));
     assert_eq!(z.get((0, 10)), true);
     assert_eq!(z.get((1, 0)), false);
@@ -42,7 +42,7 @@ mod bitmatrix_tests {
 
   #[test]
   fn bitmatrix_xnor() {
-    let (mut x, y) = prepare_matrix_for_union();
+    let (x, y) = prepare_matrix_for_union();
     let z = BitMatrix2::from_iter(x.iter().xnor(&y.iter()));
     assert_eq!(z.get((0, 10)), false);
     assert_eq!(z.get((1, 0)), true);

@@ -95,6 +95,11 @@ impl Bitpack for Bitpack32 {
     return Bitpack32::from_bool(tmp);
   }
 
+  fn trues() -> Bitpack32 {
+    let tmp: Vec<bool> = vec![true; Bitpack32::limit_index() as usize];
+    return Bitpack32::from_bool(tmp);
+  }
+
   fn get(&self, index: u32) -> bool {
     return bit_to_bool(self.storage, index);
   }
