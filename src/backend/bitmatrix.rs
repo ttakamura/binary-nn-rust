@@ -3,6 +3,7 @@ use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
 use backend::bititer::*;
+use backend::bitvec::*;
 
 #[derive(Debug)]
 pub struct BitMatrix2 {
@@ -70,6 +71,10 @@ impl BitMatrix2 {
     return BitIter::new(slice.into_iter(), ncol);
   }
 
+  pub fn row_vec(&self, irow: u32) -> BitVec {
+    BitVec::from_iter(self.row_iter(irow))
+  }
+
   pub fn from_iter<I>(iter: I) -> Self
     where I: BitIterator<Item = Bitpack32, Index = (u32, u32)>
   {
@@ -81,19 +86,14 @@ impl BitMatrix2 {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 
-  // pub fn count_ones(&self) -> u32 {
-  //   let mut total = 0;
-  //   let (last_block_index, last_bit_index) = self.offset_of(self.nbits - 1);
-  //   let last_check = last_block_index as usize;
-  //   for (index, x) in self.storage.iter().enumerate() {
-  //     if index == last_check {
-  //       total += x.mask(last_bit_index).count_ones();
-  //     } else {
-  //       total += x.count_ones();
-  //     }
-  //   }
-  //   return total;
-  // }
+  pub fn dot(&self, other: &BitVec) -> Vec<u32> {
+    return self.count_ones();
+  }
+
+  pub fn count_ones(&self) -> Vec<u32> {
+    let (nrow, _) = self.nbits;
+    return (0..nrow).map(|i| self.row_vec(i).count_ones()).collect();
+  }
 
   #[inline]
   fn block_per_row(&self) -> u32 {

@@ -53,18 +53,18 @@ mod bitmatrix_vector_tests {
   #[test]
   fn bitmatrix_row_vec_dot() {
     let (x, y) = prepare_matrix();
-    let x_vec = BitVec::from_iter(x.row_iter(1));
+    let x_vec = x.row_vec(1);
     let total = x_vec.dot(&y);
     assert_eq!(total, 32);
   }
 
-  // #[test]
-  // fn bitmatrix_vec_dot() {
-  //   let (x, y) = prepare_matrix();
-  //   let z: Vec<u32> = BitMatrix2::from_iter(x.iter())
-  //   assert_eq!(z.length, 3);
-  //   assert_eq!(z.get(0), 31);
-  //   assert_eq!(z.get(1), 32);
-  //   assert_eq!(z.get(2), 31);
-  // }
+  #[test]
+  fn bitmatrix_vec_dot() {
+    let (x, y) = prepare_matrix();
+    let z: Vec<u32> = x.dot(&y);
+    assert_eq!(z.len(), 3);
+    assert_eq!(z[0], 31);
+    assert_eq!(z[1], 32);
+    assert_eq!(z[2], 31);
+  }
 }
