@@ -1,1 +1,2 @@
-
+* やること
+  - Matrix.dot(Matrix) 実装
