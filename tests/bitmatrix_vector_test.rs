@@ -61,7 +61,7 @@ mod bitmatrix_vector_tests {
   #[test]
   fn bitmatrix_vec_dot() {
     let (x, y) = prepare_matrix();
-    let z: Vec<u32> = x.dot(&y);
+    let z: Vec<u32> = x.dot_vec(&y);
     assert_eq!(z.len(), 3);
     assert_eq!(z[0], 31);
     assert_eq!(z[1], 32);

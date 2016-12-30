@@ -87,7 +87,7 @@ impl BitMatrix2 {
   }
 
   // TODO: BitVec の iter をリピートしてフラットにできれば、もっと効率よくなる？
-  pub fn dot(&self, other: &BitVec) -> Vec<u32> {
+  pub fn dot_vec(&self, other: &BitVec) -> Vec<u32> {
     let (nrow, _) = self.nbits;
     return (0..nrow).map(|i| self.row_vec(i).dot(&other)).collect();
   }
