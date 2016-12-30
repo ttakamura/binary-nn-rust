@@ -74,7 +74,7 @@ impl BitVec {
     let last_check = last_block_index as usize;
     for (index, x) in self.storage.iter().enumerate() {
       if index == last_check {
-        total += x.count_ones_mask(last_bit_index);
+        total += x.mask(last_bit_index).count_ones();
       } else {
         total += x.count_ones();
       }

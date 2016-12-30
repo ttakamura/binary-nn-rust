@@ -2,7 +2,6 @@ extern crate binary_nn;
 
 mod bitpack_tests {
   use binary_nn::backend::bitpack::*;
-  use binary_nn::backend::bitvec::*;
 
   #[test]
   fn bitpack_from_bool() {
@@ -78,6 +77,18 @@ mod bitpack_tests {
     }
     for index in 10..32 {
       assert_eq!(x.get(index), false);
+    }
+  }
+
+  #[test]
+  fn bitpack_mask() {
+    let x = Bitpack32::trues();
+    let y = x.mask(24);
+    for index in 0..25 {
+      assert_eq!(y.get(index), true);
+    }
+    for index in 25..32 {
+      assert_eq!(y.get(index), false);
     }
   }
 

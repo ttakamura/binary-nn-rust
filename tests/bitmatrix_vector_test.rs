@@ -58,7 +58,7 @@ mod bitmatrix_vector_tests {
                "1111111111 0111111111 1111111111 10");
     assert_eq!(z.block(1).pretty_str(),
                "1111111111 1111111111 1111111111 11");
-    // let total = z.count_ones();
-    // assert_eq!(total, 32);
+    let total = z.count_ones();
+    assert_eq!(total, 32);
   }
 }

@@ -12,7 +12,7 @@ pub trait Bitpack: Clone {
   fn mut_xor(&mut self, other: &Self);
   fn mut_xnor(&mut self, other: &Self);
   fn count_ones(&self) -> u32;
-  fn count_ones_mask(&self, mask_after: u32) -> u32;
+  fn mask(&self, mask_after: u32) -> Self where Self: Sized;
 
   fn xnor(&self, other: &Self) -> Self
     where Self: Sized
@@ -135,8 +135,8 @@ impl Bitpack for Bitpack32 {
     self.storage.count_ones()
   }
 
-  fn count_ones_mask(&self, mask_after: u32) -> u32 {
-    self.storage.count_ones()
+  fn mask(&self, mask_after: u32) -> Bitpack32 {
+    self.intersect(&Bitpack32::masked_trues(mask_after))
   }
 }
 
