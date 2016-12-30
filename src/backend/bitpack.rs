@@ -91,13 +91,11 @@ impl Bitpack for Bitpack32 {
   }
 
   fn falses() -> Bitpack32 {
-    let tmp: Vec<bool> = vec![false; Bitpack32::limit_index() as usize];
-    return Bitpack32::from_bool(tmp);
+    Bitpack32::new(0)
   }
 
   fn trues() -> Bitpack32 {
-    let tmp: Vec<bool> = vec![true; Bitpack32::limit_index() as usize];
-    return Bitpack32::from_bool(tmp);
+    Bitpack32::new(u32::max_value())
   }
 
   fn get(&self, index: u32) -> bool {

@@ -57,17 +57,17 @@ mod bitpack_tests {
   #[test]
   fn bitpack_falses() {
     let x = Bitpack32::falses();
-    assert_eq!(x.get(0), false);
-    assert_eq!(x.get(1), false);
-    assert_eq!(x.get(31), false);
+    for index in 0..32 {
+      assert_eq!(x.get(index), false);
+    }
   }
 
   #[test]
   fn bitpack_tures() {
     let x = Bitpack32::trues();
-    assert_eq!(x.get(0), true);
-    assert_eq!(x.get(1), true);
-    assert_eq!(x.get(31), true);
+    for index in 0..32 {
+      assert_eq!(x.get(index), true);
+    }
   }
 
   #[test]
