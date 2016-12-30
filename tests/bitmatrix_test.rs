@@ -1,6 +1,7 @@
 extern crate binary_nn;
 
 mod bitmatrix_tests {
+  use binary_nn::backend::bititer::*;
   use binary_nn::backend::bitmatrix::*;
   use binary_nn::backend::bitmatrix_trait::*;
 
@@ -27,45 +28,23 @@ mod bitmatrix_tests {
   #[test]
   fn bitmatrix_union() {
     let (mut x, y) = prepare_matrix_for_union();
-    x.mut_iter().union(y.iter());
-    assert_eq!(x.get((1, 0)), false);
-    assert_eq!(x.get((1, 30)), true);
-    assert_eq!(x.get((1, 31)), true);
-    assert_eq!(x.get((1, 32)), true);
-    assert_eq!(x.get((1, 33)), false);
-  }
-
-  #[test]
-  fn bitmatrix_intersect() {
-    let (mut x, y) = prepare_matrix_for_union();
-    x.mut_iter().intersect(y.iter());
-    assert_eq!(x.get((1, 0)), false);
-    assert_eq!(x.get((1, 30)), false);
-    assert_eq!(x.get((1, 31)), true);
-    assert_eq!(x.get((1, 32)), false);
-    assert_eq!(x.get((1, 33)), false);
-  }
-
-  #[test]
-  fn bitmatrix_xor() {
-    let (mut x, y) = prepare_matrix_for_union();
-    x.mut_iter().xor(y.iter());
-    assert_eq!(x.get((1, 0)), false);
-    assert_eq!(x.get((1, 30)), true);
-    assert_eq!(x.get((1, 31)), false);
-    assert_eq!(x.get((1, 32)), true);
-    assert_eq!(x.get((1, 33)), false);
+    let z = BitMatrix2::from_iter(x.iter().union(&y.iter()));
+    assert_eq!(z.get((1, 0)), false);
+    assert_eq!(z.get((1, 30)), true);
+    assert_eq!(z.get((1, 31)), true);
+    assert_eq!(z.get((1, 32)), true);
+    assert_eq!(z.get((1, 33)), false);
   }
 
   #[test]
   fn bitmatrix_xnor() {
     let (mut x, y) = prepare_matrix_for_union();
-    x.mut_iter().xnor(y.iter());
-    assert_eq!(x.get((1, 0)), true);
-    assert_eq!(x.get((1, 30)), false);
-    assert_eq!(x.get((1, 31)), true);
-    assert_eq!(x.get((1, 32)), false);
-    assert_eq!(x.get((1, 33)), true);
+    let z = BitMatrix2::from_iter(x.iter().xnor(&y.iter()));
+    assert_eq!(z.get((1, 0)), true);
+    assert_eq!(z.get((1, 30)), false);
+    assert_eq!(z.get((1, 31)), true);
+    assert_eq!(z.get((1, 32)), false);
+    assert_eq!(z.get((1, 33)), true);
   }
 
   #[test]

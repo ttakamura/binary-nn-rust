@@ -64,7 +64,7 @@ impl BitVec {
     Self::new(Vec::from_iter(iter), nbits)
   }
 
-  fn iter(&self) -> BitIter<u32> {
+  pub fn iter(&self) -> BitIter<u32> {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 

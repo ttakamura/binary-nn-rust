@@ -8,14 +8,6 @@ pub trait BitMatrix
 {
   type Index: PartialEq + Clone;
 
-  // fn union<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpUnion> {
-  //   self.iter().union(&other.iter())
-  // }
-  //
-  // fn xnor<'a>(&'a self, other: &'a Self) -> BitIterZip<BitIter, BitIter, BitOpXnor> {
-  //   self.iter().xnor(&other.iter())
-  // }
-
   fn get(&self, index: Self::Index) -> bool {
     let (w, b) = self.offset_of(index);
     return self.block(w).get(b);

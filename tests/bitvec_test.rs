@@ -60,70 +60,6 @@ mod bitvec_tests {
   }
 
   #[test]
-  fn bitvec_mut_union() {
-    let mut x = BitVec::falses(34);
-    let mut y = BitVec::falses(34);
-    x.set_true(30);
-    x.set_true(31);
-    y.set_true(31);
-    y.set_true(32);
-    x.mut_iter().union(y.iter());
-    assert_eq!(x.get(0), false);
-    assert_eq!(x.get(30), true);
-    assert_eq!(x.get(31), true);
-    assert_eq!(x.get(32), true);
-    assert_eq!(x.get(33), false);
-  }
-
-  #[test]
-  fn bitvec_mut_intersect() {
-    let mut x = BitVec::falses(34);
-    let mut y = BitVec::falses(34);
-    x.set_true(30);
-    x.set_true(31);
-    y.set_true(31);
-    y.set_true(32);
-    x.mut_iter().intersect(y.iter());
-    assert_eq!(x.get(0), false);
-    assert_eq!(x.get(30), false);
-    assert_eq!(x.get(31), true);
-    assert_eq!(x.get(32), false);
-    assert_eq!(x.get(33), false);
-  }
-
-  #[test]
-  fn bitvec_mut_xor() {
-    let mut x = BitVec::falses(34);
-    let mut y = BitVec::falses(34);
-    x.set_true(30);
-    x.set_true(31);
-    y.set_true(31);
-    y.set_true(32);
-    x.mut_iter().xor(y.iter());
-    assert_eq!(x.get(0), false);
-    assert_eq!(x.get(30), true);
-    assert_eq!(x.get(31), false);
-    assert_eq!(x.get(32), true);
-    assert_eq!(x.get(33), false);
-  }
-
-  #[test]
-  fn bitvec_mut_xnor() {
-    let mut x = BitVec::falses(34);
-    let mut y = BitVec::falses(34);
-    x.set_true(30);
-    x.set_true(31);
-    y.set_true(31);
-    y.set_true(32);
-    x.mut_iter().xnor(y.iter());
-    assert_eq!(x.get(0), true);
-    assert_eq!(x.get(30), false);
-    assert_eq!(x.get(31), true);
-    assert_eq!(x.get(32), false);
-    assert_eq!(x.get(33), true);
-  }
-
-  #[test]
   fn bitvec_union() {
     let mut x = BitVec::falses(34);
     let mut a = BitVec::falses(34);
@@ -135,7 +71,7 @@ mod bitvec_tests {
     a.set_true(32);
     b.set_true(10);
     b.set_true(11);
-    let z = BitVec::from_iter(x.union(&a).union(&b.iter()));
+    let z = BitVec::from_iter(x.iter().union(&a.iter()).union(&b.iter()));
     assert_eq!(z.get(0), false);
     assert_eq!(z.get(9), false);
     assert_eq!(z.get(10), true);
@@ -155,7 +91,7 @@ mod bitvec_tests {
     x.set_true(31);
     y.set_true(31);
     y.set_true(32);
-    let z = BitVec::from_iter(x.xnor(&y));
+    let z = BitVec::from_iter(x.iter().xnor(&y.iter()));
     assert_eq!(z.get(0), true);
     assert_eq!(z.get(30), false);
     assert_eq!(z.get(31), true);

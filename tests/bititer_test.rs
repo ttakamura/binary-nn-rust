@@ -37,11 +37,11 @@ mod bititer_tests {
   fn bitzip_new() {
     let (_, y) = prepare_vector();
     let yi = y.iter();
-    assert_eq!(yi.nbits(), 34);
+    assert_eq!(yi.shape(), 34);
   }
 
   #[test]
-  #[should_panic(expected = "iter.nbits should be the same length")]
+  #[should_panic(expected = "iter.shape should be the same length")]
   fn bitzip_new_panic() {
     let x = BitVec::falses(34);
     let y = BitVec::falses(35);

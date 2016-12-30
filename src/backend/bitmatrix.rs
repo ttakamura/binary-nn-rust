@@ -1,3 +1,4 @@
+use std::iter::FromIterator;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
 use backend::bitmatrix_trait::*;
@@ -69,7 +70,14 @@ impl BitMatrix2 {
     return BitIter::new(slice.into_iter(), ncol);
   }
 
-  fn iter(&self) -> BitIter<(u32, u32)> {
+  pub fn from_iter<I>(iter: I) -> Self
+    where I: BitIterator<Item = Bitpack32, Index = (u32, u32)>
+  {
+    let nbits = iter.shape().clone();
+    Self::new(Vec::from_iter(iter), nbits)
+  }
+
+  pub fn iter(&self) -> BitIter<(u32, u32)> {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 
