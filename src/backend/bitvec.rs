@@ -68,6 +68,20 @@ impl BitVec {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 
+  pub fn count_ones(&self) -> u32 {
+    let mut total = 0;
+    let (last_block_index, last_bit_index) = self.offset_of(self.nbits - 1);
+    let last_check = last_block_index as usize;
+    for (index, x) in self.storage.iter().enumerate() {
+      if index == last_check {
+        total += x.count_ones_mask(last_bit_index);
+      } else {
+        total += x.count_ones();
+      }
+    }
+    return total;
+  }
+
   #[inline]
   fn block_num(&self) -> u32 {
     return BitVec::block_num_of(self.nbits);

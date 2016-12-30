@@ -27,10 +27,6 @@ pub trait BitIterator
     return BitIterZip::new(op, self.clone(), other.clone());
   }
 
-  fn count_ones(&self) -> u32 {
-    self.clone().fold(0, |acc, x| acc + x.count_ones())
-  }
-
   fn shape(&self) -> Self::Index;
 }
 

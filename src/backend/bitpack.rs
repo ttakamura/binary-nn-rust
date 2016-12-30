@@ -1,12 +1,8 @@
-#[derive(Clone,Debug)]
-pub struct Bitpack32 {
-  storage: u32,
-}
-
 pub trait Bitpack: Clone {
   fn limit_index() -> u32;
   fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
   fn falses() -> Self where Self: Sized;
+  fn trues() -> Self where Self: Sized;
   fn get(&self, index: u32) -> bool;
   fn set_true(&mut self, index: u32);
   fn set_false(&mut self, index: u32);
@@ -15,6 +11,7 @@ pub trait Bitpack: Clone {
   fn mut_xor(&mut self, other: &Self);
   fn mut_xnor(&mut self, other: &Self);
   fn count_ones(&self) -> u32;
+  fn count_ones_mask(&self, mask_after: u32) -> u32;
 
   fn xnor(&self, other: &Self) -> Self
     where Self: Sized
@@ -24,11 +21,27 @@ pub trait Bitpack: Clone {
     return x;
   }
 
+  fn xor(&self, other: &Self) -> Self
+    where Self: Sized
+  {
+    let mut x = (*self).clone();
+    x.mut_xor(other);
+    return x;
+  }
+
   fn union(&self, other: &Self) -> Self
     where Self: Sized
   {
     let mut x = (*self).clone();
     x.mut_union(other);
+    return x;
+  }
+
+  fn intersect(&self, other: &Self) -> Self
+    where Self: Sized
+  {
+    let mut x = (*self).clone();
+    x.mut_intersect(other);
     return x;
   }
 
@@ -46,6 +59,11 @@ pub trait Bitpack: Clone {
     }
     return v.concat();
   }
+}
+
+#[derive(Clone,Debug)]
+pub struct Bitpack32 {
+  storage: u32,
 }
 
 impl Bitpack32 {
@@ -106,6 +124,10 @@ impl Bitpack for Bitpack32 {
   }
 
   fn count_ones(&self) -> u32 {
+    self.storage.count_ones()
+  }
+
+  fn count_ones_mask(&self, mask_after: u32) -> u32 {
     self.storage.count_ones()
   }
 }

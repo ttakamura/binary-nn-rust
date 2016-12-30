@@ -1,7 +1,6 @@
 use std::cmp::PartialEq;
 use backend::bitpack::Bitpack32;
 use backend::bitpack::Bitpack;
-use backend::bititer::*;
 
 pub trait BitMatrix
   where Self: Sized

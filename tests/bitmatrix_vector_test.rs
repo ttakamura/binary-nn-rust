@@ -4,6 +4,7 @@ mod bitmatrix_vector_tests {
   use binary_nn::backend::bititer::*;
   use binary_nn::backend::bitmatrix::*;
   use binary_nn::backend::bitvec::*;
+  use binary_nn::backend::bitpack::*;
   use binary_nn::backend::bitmatrix_trait::*;
 
   fn prepare_matrix() -> (BitMatrix2, BitVec) {
@@ -47,5 +48,17 @@ mod bitmatrix_vector_tests {
     assert_eq!(z1.get(29), true);
     assert_eq!(z1.get(30), true);
     assert_eq!(z1.get(31), false);
+  }
+
+  #[test]
+  fn bitmatrix_row_vec_dot() {
+    let (mut x, y) = prepare_matrix();
+    let z = BitVec::from_iter(x.row_iter(1).xnor(&y.iter()));
+    assert_eq!(z.block(0).pretty_str(),
+               "1111111111 0111111111 1111111111 10");
+    assert_eq!(z.block(1).pretty_str(),
+               "1111111111 1111111111 1111111111 11");
+    // let total = z.count_ones();
+    // assert_eq!(total, 32);
   }
 }

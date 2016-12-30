@@ -63,6 +63,14 @@ mod bitpack_tests {
   }
 
   #[test]
+  fn bitpack_tures() {
+    let x = Bitpack32::trues();
+    assert_eq!(x.get(0), true);
+    assert_eq!(x.get(1), true);
+    assert_eq!(x.get(31), true);
+  }
+
+  #[test]
   fn bitpack_union() {
     let mut x = Bitpack32::falses();
     let mut y = Bitpack32::falses();
