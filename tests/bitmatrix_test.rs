@@ -8,10 +8,12 @@ mod bitmatrix_tests {
   fn prepare_matrix_for_union() -> (BitMatrix2, BitMatrix2) {
     let mut x = BitMatrix2::falses((3, 34));
     let mut y = BitMatrix2::falses((3, 34));
+    x.set_true((0, 10));
     x.set_true((1, 30));
     x.set_true((1, 31));
     y.set_true((1, 31));
     y.set_true((1, 32));
+    y.set_true((2, 33));
     return (x, y);
   }
 
@@ -29,22 +31,26 @@ mod bitmatrix_tests {
   fn bitmatrix_union() {
     let (mut x, y) = prepare_matrix_for_union();
     let z = BitMatrix2::from_iter(x.iter().union(&y.iter()));
+    assert_eq!(z.get((0, 10)), true);
     assert_eq!(z.get((1, 0)), false);
     assert_eq!(z.get((1, 30)), true);
     assert_eq!(z.get((1, 31)), true);
     assert_eq!(z.get((1, 32)), true);
     assert_eq!(z.get((1, 33)), false);
+    assert_eq!(z.get((2, 33)), true);
   }
 
   #[test]
   fn bitmatrix_xnor() {
     let (mut x, y) = prepare_matrix_for_union();
     let z = BitMatrix2::from_iter(x.iter().xnor(&y.iter()));
+    assert_eq!(z.get((0, 10)), false);
     assert_eq!(z.get((1, 0)), true);
     assert_eq!(z.get((1, 30)), false);
     assert_eq!(z.get((1, 31)), true);
     assert_eq!(z.get((1, 32)), false);
     assert_eq!(z.get((1, 33)), true);
+    assert_eq!(z.get((2, 33)), false);
   }
 
   #[test]
