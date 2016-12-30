@@ -64,6 +64,11 @@ impl BitVec {
     Self::new(Vec::from_iter(iter), nbits)
   }
 
+  pub fn dot(&self, other: &Self) -> u32 {
+    let z = BitVec::from_iter(self.iter().xnor(&other.iter()));
+    return z.count_ones();
+  }
+
   pub fn iter(&self) -> BitIter<u32> {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }

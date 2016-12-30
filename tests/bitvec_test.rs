@@ -98,4 +98,16 @@ mod bitvec_tests {
     assert_eq!(z.get(32), false);
     assert_eq!(z.get(33), true);
   }
+
+  #[test]
+  fn bitvec_dot() {
+    let mut x = BitVec::falses(34);
+    let mut y = BitVec::falses(34);
+    x.set_true(30);
+    x.set_true(31);
+    y.set_true(31);
+    y.set_true(32);
+    let total = x.dot(&y);
+    assert_eq!(total, 32);
+  }
 }
