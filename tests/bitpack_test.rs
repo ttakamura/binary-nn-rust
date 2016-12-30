@@ -71,6 +71,17 @@ mod bitpack_tests {
   }
 
   #[test]
+  fn bitpack_masked_tures() {
+    let x = Bitpack32::masked_trues(9);
+    for index in 0..10 {
+      assert_eq!(x.get(index), true);
+    }
+    for index in 10..32 {
+      assert_eq!(x.get(index), false);
+    }
+  }
+
+  #[test]
   fn bitpack_union() {
     let mut x = Bitpack32::falses();
     let mut y = Bitpack32::falses();

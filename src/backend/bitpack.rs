@@ -3,6 +3,7 @@ pub trait Bitpack: Clone {
   fn from_bool(vec: Vec<bool>) -> Self where Self: Sized;
   fn falses() -> Self where Self: Sized;
   fn trues() -> Self where Self: Sized;
+  fn masked_trues(mask_after: u32) -> Self where Self: Sized;
   fn get(&self, index: u32) -> bool;
   fn set_true(&mut self, index: u32);
   fn set_false(&mut self, index: u32);
@@ -96,6 +97,10 @@ impl Bitpack for Bitpack32 {
 
   fn trues() -> Bitpack32 {
     Bitpack32::new(u32::max_value())
+  }
+
+  fn masked_trues(mask_after: u32) -> Bitpack32 {
+    Bitpack32::new(u32::max_value() << (31 - mask_after))
   }
 
   fn get(&self, index: u32) -> bool {
