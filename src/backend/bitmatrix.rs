@@ -86,13 +86,10 @@ impl BitMatrix2 {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 
+  // TODO: BitVec の iter をリピートしてフラットにできれば、もっと効率よくなる？
   pub fn dot(&self, other: &BitVec) -> Vec<u32> {
-    return self.count_ones();
-  }
-
-  pub fn count_ones(&self) -> Vec<u32> {
     let (nrow, _) = self.nbits;
-    return (0..nrow).map(|i| self.row_vec(i).count_ones()).collect();
+    return (0..nrow).map(|i| self.row_vec(i).dot(&other)).collect();
   }
 
   #[inline]
