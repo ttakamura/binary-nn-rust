@@ -1,55 +1,51 @@
 extern crate binary_nn;
 
 mod bitmatrix_vector_tests {
-  // use binary_nn::backend::bitmatrix::*;
-  // use binary_nn::backend::bitvec::*;
-  // use binary_nn::backend::bitmatrix_trait::*;
+  use binary_nn::backend::bititer::*;
+  use binary_nn::backend::bitmatrix::*;
+  use binary_nn::backend::bitvec::*;
+  use binary_nn::backend::bitmatrix_trait::*;
 
-  // fn prepare_matrix() -> BitMatrix2 {
-  //   let mut x = BitMatrix2::falses((3, 34));
-  //   x.set_true((0, 28));
-  //   x.set_true((0, 29));
-  //   x.set_true((1, 30));
-  //   x.set_true((1, 31));
-  //   x.set_true((2, 32));
-  //   x.set_true((2, 33));
-  //   return x;
-  // }
-  //
-  // fn prepare_vector() -> BitVec {
-  //   let mut y = BitVec::falses(34);
-  //   y.set_true(29);
-  //   y.set_true(30);
-  //   y.set_true(33);
-  //   return y;
-  // }
+  fn prepare_matrix() -> (BitMatrix2, BitVec) {
+    let mut x = BitMatrix2::falses((3, 34));
+    let mut y = BitVec::falses(34);
+    x.set_true((0, 9));
+    x.set_true((1, 30));
+    x.set_true((1, 31));
+    x.set_true((2, 20));
+    y.set_true(10);
+    y.set_true(30);
+    return (x, y);
+  }
 
-  // TODO
-  // #[test]
-  // fn bitmatrix_xnor_vector() {
-  //   let mut x = prepare_matrix();
-  //   let y = prepare_vector();
-  //
-  //   let mut yi = y.iter();
-  //   yi.repeat(3);
-  //
-  //   x.mut_iter().xnor(&yi);
-  //
-  //   assert_eq!(x.get((0, 28)), false);
-  //   assert_eq!(x.get((0, 29)), true);
-  //   assert_eq!(x.get((0, 30)), false);
-  //   assert_eq!(x.get((0, 31)), true);
-  //
-  //   assert_eq!(x.get((1, 28)), true);
-  //   assert_eq!(x.get((1, 29)), false);
-  //   assert_eq!(x.get((1, 30)), true);
-  //   assert_eq!(x.get((1, 31)), false);
-  //
-  //   assert_eq!(x.get((2, 28)), true);
-  //   assert_eq!(x.get((2, 29)), false);
-  //   assert_eq!(x.get((2, 30)), false);
-  //   assert_eq!(x.get((2, 31)), true);
-  //   assert_eq!(x.get((2, 32)), false);
-  //   assert_eq!(x.get((2, 33)), true);
-  // }
+  #[test]
+  fn bitmatrix_row_vec_union() {
+    let (mut x, y) = prepare_matrix();
+    let z0 = BitVec::from_iter(x.row_iter(0).union(&y.iter()));
+    assert_eq!(z0.get(9), true);
+    assert_eq!(z0.get(10), true);
+    assert_eq!(z0.get(11), false);
+    assert_eq!(z0.get(29), false);
+    assert_eq!(z0.get(30), true);
+    assert_eq!(z0.get(31), false);
+    let z1 = BitVec::from_iter(x.row_iter(1).union(&y.iter()));
+    assert_eq!(z1.get(9), false);
+    assert_eq!(z1.get(10), true);
+    assert_eq!(z1.get(11), false);
+    assert_eq!(z1.get(29), false);
+    assert_eq!(z1.get(30), true);
+    assert_eq!(z1.get(31), true);
+  }
+
+  #[test]
+  fn bitmatrix_row_vec_xnor() {
+    let (mut x, y) = prepare_matrix();
+    let z1 = BitVec::from_iter(x.row_iter(1).xnor(&y.iter()));
+    assert_eq!(z1.get(9), true);
+    assert_eq!(z1.get(10), false);
+    assert_eq!(z1.get(11), true);
+    assert_eq!(z1.get(29), true);
+    assert_eq!(z1.get(30), true);
+    assert_eq!(z1.get(31), false);
+  }
 }
