@@ -1,2 +1,4 @@
 * やること
   - Matrix.dot(Matrix) 実装
+  - [[file:src/backend/bitmatrix.rs::pub%20fn%20dot_vec(&self,%20other:%20&BitVec)%20->%20Vec<u32>%20{][TODO: BitVec の iter をリピートしてフラットに]]
+  - [[file:src/backend/bitmatrix.rs::pub%20fn%20col_iter(&self,%20icol:%20u32)%20->%20BitIter<u32>%20{][TODO: Stride付きのイテレータを利用し効率的にする]]

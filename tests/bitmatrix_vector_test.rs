@@ -4,7 +4,6 @@ mod bitmatrix_vector_tests {
   use binary_nn::backend::bititer::*;
   use binary_nn::backend::bitmatrix::*;
   use binary_nn::backend::bitvec::*;
-  use binary_nn::backend::bitpack::*;
   use binary_nn::backend::bitmatrix_trait::*;
 
   fn prepare_matrix() -> (BitMatrix2, BitVec) {

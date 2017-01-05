@@ -75,6 +75,20 @@ impl BitMatrix2 {
     BitVec::from_iter(self.row_iter(irow))
   }
 
+  // TODO: Stride付きのイテレータを利用し効率的にする
+  pub fn col_vec(&self, icol: u32) -> BitVec {
+    let (nrow, _) = self.nbits;
+    let mut col_vec = BitVec::falses(nrow);
+    for irow in 0..nrow {
+      if self.get((irow, icol)) {
+        col_vec.set_true(irow);
+      } else {
+        col_vec.set_false(irow);
+      }
+    }
+    return col_vec;
+  }
+
   pub fn from_iter<I>(iter: I) -> Self
     where I: BitIterator<Item = Bitpack32, Index = (u32, u32)>
   {
@@ -84,6 +98,14 @@ impl BitMatrix2 {
 
   pub fn iter(&self) -> BitIter<(u32, u32)> {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
+  }
+
+  pub fn dot(&self, other: Self) -> Vec<Vec<u32>> {
+    let (nrow, _) = self.nbits;
+    let mut results = vec![Vec<u32>; nrow];
+    for irow in 0..nrow {
+      results[irow] = self.dot_vec(other.col_vec(irow))
+    }
   }
 
   // TODO: BitVec の iter をリピートしてフラットにできれば、もっと効率よくなる？

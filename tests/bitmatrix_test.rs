@@ -18,6 +18,32 @@ mod bitmatrix_tests {
   }
 
   #[test]
+  fn bitmatrix_col_vec() {
+    let mut x = BitMatrix2::falses((3, 34));
+    x.set_true((1, 10));
+
+    let y = x.col_vec(9);
+    assert_eq!(y.len(), 3);
+    assert_eq!(y.get(0), false);
+    assert_eq!(y.get(1), false);
+    assert_eq!(y.get(2), false);
+
+    let y = x.col_vec(10);
+    assert_eq!(y.len(), 3);
+    assert_eq!(y.get(0), false);
+    assert_eq!(y.get(1), true);
+    assert_eq!(y.get(2), false);
+  }
+
+  #[test]
+  fn bitmatrix_dot() {
+    let mut x = BitMatrix2::falses((3, 34));
+    let mut y = BitMatrix2::falses((34, 2));
+    let z = x.dot(&y);
+    assert_eq!(z.get(0).get(0), 10);
+  }
+
+  #[test]
   fn bitmatrix_set() {
     let mut x = BitMatrix2::falses((3, 40));
     assert_eq!(x.get((1, 33)), false);
