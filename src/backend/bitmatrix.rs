@@ -102,10 +102,20 @@ impl BitMatrix2 {
 
   pub fn dot(&self, other: Self) -> Vec<Vec<u32>> {
     let (nrow, _) = self.nbits;
-    let mut results = vec![Vec<u32>; nrow];
+    let (_, ncol) = other.nbits;
+
+    let mut results = Vec::new();
     for irow in 0..nrow {
-      results[irow] = self.dot_vec(other.col_vec(irow))
+      results.push(vec![0; ncol as usize]);
     }
+
+    for icol in 0..ncol {
+      let row_vec = self.dot_vec(&other.col_vec(icol));
+      for irow in 0..nrow {
+        results[irow as usize][icol as usize] = row_vec[irow as usize];
+      }
+    }
+    return results;
   }
 
   // TODO: BitVec の iter をリピートしてフラットにできれば、もっと効率よくなる？
