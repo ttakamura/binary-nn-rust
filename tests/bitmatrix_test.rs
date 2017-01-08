@@ -40,7 +40,10 @@ mod bitmatrix_tests {
     let mut x = BitMatrix2::falses((3, 34));
     let mut y = BitMatrix2::falses((34, 2));
     let z = x.dot(&y);
-    assert_eq!(z.get(0).get(0), 10);
+    assert_eq!(z.len(), 3);
+    assert_eq!(z[0].len(), 2);
+    assert_eq!(z[0][0], 34);
+    assert_eq!(z[1][0], 34);
   }
 
   #[test]
