@@ -1,6 +1,6 @@
 extern crate binary_nn;
+mod loader;
 
 fn main() {
-  println!("3 + 5 = {}", binary_nn::sandbox::add(3, 5));
-  println!("Hello, world!");
+  loader::load("data/binary_net.l1.b.dat".to_string());
 }
