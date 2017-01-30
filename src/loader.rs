@@ -6,7 +6,10 @@ use std::mem;
 
 extern crate binary_nn;
 use binary_nn::backend::bitmatrix::BitMatrix2;
+use binary_nn::backend::bitvec::BitVec;
 use binary_nn::backend::bitmatrix_trait::*;
+
+pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {}
 
 pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
   let f32_vec = load_f32(path);
