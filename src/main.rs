@@ -8,7 +8,9 @@ fn main() {
   println!("result[0, 0]   {}", result.get((0, 0)));
   println!("result[999, 783] {}", result.get((999, 783)));
 
-  let result = loader::load_f32_as_bitvec("data/binary_net.b1.dat".to_string(), 1000);
-  println!("result[0]   {}", result.get(0));
-  println!("result[999] {}", result.get(999));
+  let bn = loader::load_batch_norm_weight("data/binary_net.b1.dat".to_string(), 1000);
+  println!("avg_mean[999] {}", bn.avg_mean.len());
+  println!("avg_var[999] {}", bn.avg_var.len());
+  println!("beta[999] {}", bn.beta.len());
+  println!("gamma[999] {}", bn.gamma.len());
 }

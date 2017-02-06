@@ -9,7 +9,42 @@ use binary_nn::backend::bitmatrix::BitMatrix2;
 use binary_nn::backend::bitvec::BitVec;
 use binary_nn::backend::bitmatrix_trait::*;
 
-pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {}
+pub struct BatchNormWeight {
+  pub avg_mean: Vec<f32>,
+  pub avg_var: Vec<f32>,
+  pub beta: Vec<f32>,
+  pub gamma: Vec<f32>,
+}
+
+pub fn load_batch_norm_weight(path: String, nrow: u32) -> BatchNormWeight {
+  let f32_vec = load_f32(path);
+
+  let range = |offset: usize| (offset..((offset + nrow as usize) as usize));
+
+  let mut avg_mean = Vec::new();
+  avg_mean.copy_from_slice(&f32_vec[range(0 as usize)]);
+
+  let mut avg_var = Vec::new();
+  avg_var.copy_from_slice(&f32_vec[range(nrow as usize)]);
+
+  let mut beta = Vec::new();
+  beta.copy_from_slice(&f32_vec[range((nrow * 2) as usize)]);
+
+  let mut gamma = Vec::new();
+  gamma.copy_from_slice(&f32_vec[range((nrow * 3) as usize)]);
+
+  return BatchNormWeight {
+    avg_mean: avg_mean,
+    avg_var: avg_var,
+    beta: beta,
+    gamma: gamma,
+  };
+}
+
+pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {
+  let f32_vec = load_f32(path);
+  return load_vec(&f32_vec, 0, nbits);
+}
 
 pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
   let f32_vec = load_f32(path);
@@ -17,18 +52,34 @@ pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
   let mut idx = 0;
   for irow in 0..nrow {
     for icol in 0..ncol {
-      if f32_vec[idx] > 0.0 {
-        bit_mat.set_true((irow, icol));
-      } else {
-        bit_mat.set_false((irow, icol));
-      }
+      set_bit(f32_vec[idx], &mut bit_mat, (irow, icol));
       idx += 1
     }
   }
   return bit_mat;
 }
 
-pub fn load_f32(path: String) -> Vec<f32> {
+// -- PRIVATE --
+
+fn load_vec(f32_vec: &Vec<f32>, offset: u32, nbits: u32) -> BitVec {
+  let mut bit_vec = BitVec::falses(nbits);
+  for idx in 0..nbits {
+    set_bit(f32_vec[(idx + offset) as usize], &mut bit_vec, idx);
+  }
+  return bit_vec;
+}
+
+fn set_bit<T>(value: f32, mat: &mut T, index: T::Index)
+  where T: BitMatrixMut
+{
+  if value > 0.0 {
+    mat.set_true(index);
+  } else {
+    mat.set_false(index);
+  }
+}
+
+fn load_f32(path: String) -> Vec<f32> {
   let mut buffer: Vec<u8> = Vec::new();
 
   let mut f = match File::open(path) {
@@ -48,7 +99,7 @@ pub fn load_f32(path: String) -> Vec<f32> {
   return result;
 }
 
-pub fn pack(buffer: &[u8]) -> f32 {
+fn pack(buffer: &[u8]) -> f32 {
   let mut buf: [u8; 4] = [0; 4];
   buf[0] = buffer[0];
   buf[1] = buffer[1];
