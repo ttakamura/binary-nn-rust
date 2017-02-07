@@ -16,23 +16,11 @@ pub struct BatchNormWeight {
   pub gamma: Vec<f32>,
 }
 
-pub fn load_batch_norm_weight(path: String, nrow: u32) -> BatchNormWeight {
-  let f32_vec = load_f32(path);
-
-  let range = |offset: usize| (offset..((offset + nrow as usize) as usize));
-
-  let mut avg_mean = Vec::new();
-  avg_mean.copy_from_slice(&f32_vec[range(0 as usize)]);
-
-  let mut avg_var = Vec::new();
-  avg_var.copy_from_slice(&f32_vec[range(nrow as usize)]);
-
-  let mut beta = Vec::new();
-  beta.copy_from_slice(&f32_vec[range((nrow * 2) as usize)]);
-
-  let mut gamma = Vec::new();
-  gamma.copy_from_slice(&f32_vec[range((nrow * 3) as usize)]);
-
+pub fn load_batch_norm_weight(path: String, nrow: usize) -> BatchNormWeight {
+  let mut avg_mean = load_f32(path);
+  let mut avg_var = avg_mean.split_off(nrow);
+  let mut beta = avg_var.split_off(nrow);
+  let gamma = beta.split_off(nrow);
   return BatchNormWeight {
     avg_mean: avg_mean,
     avg_var: avg_var,
