@@ -4,10 +4,9 @@ use std::fs::File;
 use std::error::Error;
 use std::mem;
 
-extern crate binary_nn;
-use binary_nn::backend::bitmatrix::BitMatrix2;
-use binary_nn::backend::bitvec::BitVec;
-use binary_nn::backend::bitmatrix_trait::*;
+use backend::bitmatrix::BitMatrix2;
+use backend::bitvec::BitVec;
+use backend::bitmatrix_trait::*;
 
 pub struct BatchNormWeight {
   pub avg_mean: Vec<f32>,

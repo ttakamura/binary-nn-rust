@@ -1,7 +1,6 @@
 extern crate binary_nn;
 use binary_nn::backend::bitmatrix_trait::*;
-
-mod loader;
+use binary_nn::loader;
 
 fn main() {
   let result = loader::load_f32_as_bitmatrix("data/binary_net.l1.W.dat".to_string(), 1000, 784);
