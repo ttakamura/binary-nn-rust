@@ -7,20 +7,14 @@ use std::mem;
 use backend::bitmatrix::BitMatrix2;
 use backend::bitvec::BitVec;
 use backend::bitmatrix_trait::*;
+use layer::batch_norm::*;
 
-pub struct BatchNormWeight {
-  pub avg_mean: Vec<f32>,
-  pub avg_var: Vec<f32>,
-  pub beta: Vec<f32>,
-  pub gamma: Vec<f32>,
-}
-
-pub fn load_batch_norm_weight(path: String, nrow: usize) -> BatchNormWeight {
+pub fn load_batch_norm_weight(path: String, nrow: usize) -> BatchNormLayer {
   let mut avg_mean = load_f32(path);
   let mut avg_var = avg_mean.split_off(nrow);
   let mut beta = avg_var.split_off(nrow);
   let gamma = beta.split_off(nrow);
-  return BatchNormWeight {
+  return BatchNormLayer {
     avg_mean: avg_mean,
     avg_var: avg_var,
     beta: beta,
