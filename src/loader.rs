@@ -6,7 +6,7 @@ use std::mem;
 
 use backend::bitmatrix::BitMatrix2;
 use backend::bitvec::BitVec;
-use backend::bitmatrix_trait::*;
+use backend::bitmatrix_trait::BitMatrixMut;
 
 pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {
   let f32_vec = load_f32(path);

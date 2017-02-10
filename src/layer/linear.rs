@@ -1,8 +1,13 @@
 use backend::bitmatrix::BitMatrix2;
-use backend::bitmatrix_trait::*;
+use loader;
+
+pub fn load(path: String, nrow: u32, ncol: u32) -> BinaryLinearLayer {
+  let weight = loader::load_f32_as_bitmatrix(path, nrow, ncol);
+  return BinaryLinearLayer { weight: weight };
+}
 
 pub struct BinaryLinearLayer {
-  weight: BitMatrix2,
+  pub weight: BitMatrix2,
 }
 
 impl BinaryLinearLayer {
