@@ -7,24 +7,10 @@ use std::mem;
 use backend::bitmatrix::BitMatrix2;
 use backend::bitvec::BitVec;
 use backend::bitmatrix_trait::*;
-use layer::batch_norm::*;
-
-pub fn load_batch_norm_weight(path: String, nrow: usize) -> BatchNormLayer {
-  let mut avg_mean = load_f32(path);
-  let mut avg_var = avg_mean.split_off(nrow);
-  let mut beta = avg_var.split_off(nrow);
-  let gamma = beta.split_off(nrow);
-  return BatchNormLayer {
-    avg_mean: avg_mean,
-    avg_var: avg_var,
-    beta: beta,
-    gamma: gamma,
-  };
-}
 
 pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {
   let f32_vec = load_f32(path);
-  return load_vec(&f32_vec, 0, nbits);
+  return load_as_bitvec(&f32_vec, 0, nbits);
 }
 
 pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
@@ -40,27 +26,7 @@ pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
   return bit_mat;
 }
 
-// -- PRIVATE --
-
-fn load_vec(f32_vec: &Vec<f32>, offset: u32, nbits: u32) -> BitVec {
-  let mut bit_vec = BitVec::falses(nbits);
-  for idx in 0..nbits {
-    set_bit(f32_vec[(idx + offset) as usize], &mut bit_vec, idx);
-  }
-  return bit_vec;
-}
-
-fn set_bit<T>(value: f32, mat: &mut T, index: T::Index)
-  where T: BitMatrixMut
-{
-  if value > 0.0 {
-    mat.set_true(index);
-  } else {
-    mat.set_false(index);
-  }
-}
-
-fn load_f32(path: String) -> Vec<f32> {
+pub fn load_f32(path: String) -> Vec<f32> {
   let mut buffer: Vec<u8> = Vec::new();
 
   let mut f = match File::open(path) {
@@ -78,6 +44,26 @@ fn load_f32(path: String) -> Vec<f32> {
     result.push(pack(chunk));
   }
   return result;
+}
+
+// -- PRIVATE --
+
+fn load_as_bitvec(f32_vec: &Vec<f32>, offset: u32, nbits: u32) -> BitVec {
+  let mut bit_vec = BitVec::falses(nbits);
+  for idx in 0..nbits {
+    set_bit(f32_vec[(idx + offset) as usize], &mut bit_vec, idx);
+  }
+  return bit_vec;
+}
+
+fn set_bit<T>(value: f32, mat: &mut T, index: T::Index)
+  where T: BitMatrixMut
+{
+  if value > 0.0 {
+    mat.set_true(index);
+  } else {
+    mat.set_false(index);
+  }
 }
 
 fn pack(buffer: &[u8]) -> f32 {
