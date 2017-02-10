@@ -8,8 +8,9 @@ fn main() {
   println!("l1[0, 0]   {}", l1.weight.get((0, 0)));
   println!("l1[999, 783] {}", l1.weight.get((999, 783)));
 
-  let z = l1.forward_u8(&vec![8u8; 784]);
+  let z = l1.forward_u8(&vec![128u8; 784]);
   println!("z[0] {}", z[0]);
+  println!("z[500] {}", z[500]);
   println!("z[999] {}", z[999]);
 
   let bn = BatchNormLayer::load("data/binary_net.b1.dat".to_string(), 1000);
