@@ -2,6 +2,7 @@ extern crate binary_nn;
 use binary_nn::backend::bitmatrix_trait::*;
 use binary_nn::layer::batch_norm::*;
 use binary_nn::layer::linear::*;
+use binary_nn::loader;
 
 fn main() {
   let l1 = BinaryLinearLayer::load("data/binary_net.l1.W.dat".to_string(), 1000, 784);
@@ -15,4 +16,7 @@ fn main() {
 
   let bn = BatchNormLayer::load("data/binary_net.b1.dat".to_string(), 1000);
   println!("bn.len {}", bn.len());
+
+  let x = loader::load_text_as_i32("data/output_y.txt".to_string());
+  println!("x[0] {}", x[0]);
 }

@@ -1,4 +1,5 @@
 use std::f32;
+use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 use std::error::Error;
@@ -7,6 +8,24 @@ use std::mem;
 use backend::bitmatrix::BitMatrix2;
 use backend::bitvec::BitVec;
 use backend::bitmatrix_trait::BitMatrixMut;
+
+pub fn load_text_as_i32(path: String) -> Vec<i32> {
+  let mut buffer = String::new();
+  let mut f = match File::open(path) {
+    Ok(file) => file,
+    Err(why) => panic!("Couldn't open {}", Error::description(&why)),
+  };
+  match f.read_to_string(&mut buffer) {
+    Ok(_) => {}
+    Err(why) => panic!("Couldn't read {}", Error::description(&why)),
+  };
+
+  let mut vec = Vec::new();
+  for line in buffer.lines() {
+    vec.push(line.parse::<i32>().unwrap());
+  }
+  return vec;
+}
 
 pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {
   let f32_vec = load_f32(path);
