@@ -1,5 +1,4 @@
 use std::f32;
-use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 use std::error::Error;
@@ -10,19 +9,19 @@ use backend::bitvec::BitVec;
 use backend::bitmatrix_trait::BitMatrixMut;
 
 pub fn load_text_as_i32(path: String) -> Vec<i32> {
-  let mut buffer = String::new();
-  let mut f = match File::open(path) {
-    Ok(file) => file,
-    Err(why) => panic!("Couldn't open {}", Error::description(&why)),
-  };
-  match f.read_to_string(&mut buffer) {
-    Ok(_) => {}
-    Err(why) => panic!("Couldn't read {}", Error::description(&why)),
-  };
-
+  let buffer = load_text(path);
   let mut vec = Vec::new();
   for line in buffer.lines() {
     vec.push(line.parse::<i32>().unwrap());
+  }
+  return vec;
+}
+
+pub fn load_text_as_f32(path: String) -> Vec<f32> {
+  let buffer = load_text(path);
+  let mut vec = Vec::new();
+  for line in buffer.lines() {
+    vec.push(line.parse::<f32>().unwrap());
   }
   return vec;
 }
@@ -46,18 +45,7 @@ pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
 }
 
 pub fn load_f32(path: String) -> Vec<f32> {
-  let mut buffer: Vec<u8> = Vec::new();
-
-  let mut f = match File::open(path) {
-    Ok(file) => file,
-    Err(why) => panic!("couldn't open {}", Error::description(&why)),
-  };
-
-  match f.read_to_end(&mut buffer) {
-    Ok(_) => println!("success load"),
-    Err(why) => panic!("couldn't open {}", Error::description(&why)),
-  };
-
+  let buffer: Vec<u8> = load_binary(path);
   let mut result: Vec<f32> = Vec::new();
   for chunk in buffer.chunks(4) {
     result.push(pack(chunk));
@@ -66,6 +54,32 @@ pub fn load_f32(path: String) -> Vec<f32> {
 }
 
 // -- PRIVATE --
+
+fn load_text(path: String) -> String {
+  let mut buffer = String::new();
+  let mut f = match File::open(path) {
+    Ok(file) => file,
+    Err(why) => panic!("Couldn't open {}", Error::description(&why)),
+  };
+  match f.read_to_string(&mut buffer) {
+    Ok(_) => {}
+    Err(why) => panic!("Couldn't read {}", Error::description(&why)),
+  };
+  return buffer;
+}
+
+fn load_binary(path: String) -> Vec<u8> {
+  let mut buffer: Vec<u8> = Vec::new();
+  let mut f = match File::open(path) {
+    Ok(file) => file,
+    Err(why) => panic!("couldn't open {}", Error::description(&why)),
+  };
+  match f.read_to_end(&mut buffer) {
+    Ok(_) => println!("success load"),
+    Err(why) => panic!("couldn't open {}", Error::description(&why)),
+  };
+  return buffer;
+}
 
 fn load_as_bitvec(f32_vec: &Vec<f32>, offset: u32, nbits: u32) -> BitVec {
   let mut bit_vec = BitVec::falses(nbits);

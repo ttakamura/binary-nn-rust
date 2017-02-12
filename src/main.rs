@@ -16,7 +16,13 @@ fn main() {
 
   let bn = BatchNormLayer::load("data/binary_net.b1.dat".to_string(), 1000);
   println!("bn.len {}", bn.len());
+  println!("bn.threshold[100] {}", bn.threshold[100]);
+  println!("bn.threshold[200] {}", bn.threshold[200]);
+  println!("bn.threshold[300] {}", bn.threshold[300]);
 
   let x = loader::load_text_as_i32("data/output_y.txt".to_string());
-  println!("x[0] {}", x[0]);
+  println!("x[100] {}", x[100]);
+
+  let x = loader::load_text_as_f32("data/output_bn.txt".to_string());
+  println!("x[100] {}", x[100]);
 }
