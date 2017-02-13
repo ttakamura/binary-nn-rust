@@ -100,7 +100,7 @@ impl BitMatrix2 {
     return BitIter::new(self.as_slice().into_iter(), self.nbits);
   }
 
-  pub fn dot(&self, other: &Self) -> Vec<Vec<u32>> {
+  pub fn dot(&self, other: &Self) -> Vec<Vec<i32>> {
     let (nrow, _) = self.nbits;
     let (_, ncol) = other.nbits;
 
@@ -119,7 +119,7 @@ impl BitMatrix2 {
   }
 
   // TODO: BitVec の iter をリピートしてフラットにできれば、もっと効率よくなる？
-  pub fn dot_vec(&self, other: &BitVec) -> Vec<u32> {
+  pub fn dot_vec(&self, other: &BitVec) -> Vec<i32> {
     let (nrow, _) = self.nbits;
     return (0..nrow).map(|i| self.row_vec(i).dot(&other)).collect();
   }

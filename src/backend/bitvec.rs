@@ -57,6 +57,14 @@ impl BitVec {
     return BitVec::new(vec, nbits);
   }
 
+  pub fn trues(nbits: <BitVec as BitMatrix>::Index) -> Self {
+    let mut vec: Vec<Bitpack32> = vec![];
+    for _ in 0..BitVec::block_num_of(nbits) {
+      vec.push(Bitpack32::trues());
+    }
+    return BitVec::new(vec, nbits);
+  }
+
   pub fn from_iter<I>(iter: I) -> Self
     where I: BitIterator<Item = Bitpack32, Index = u32>
   {
@@ -64,9 +72,10 @@ impl BitVec {
     Self::new(Vec::from_iter(iter), nbits)
   }
 
-  pub fn dot(&self, other: &Self) -> u32 {
+  pub fn dot(&self, other: &Self) -> i32 {
     let z = BitVec::from_iter(self.iter().xnor(&other.iter()));
-    return z.count_ones();
+    let ones = z.count_ones() as i32;
+    return (ones * 2) - (self.len() as i32);
   }
 
   pub fn iter(&self) -> BitIter<u32> {

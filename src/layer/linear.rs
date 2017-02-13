@@ -1,5 +1,6 @@
 use backend::bitmatrix::BitMatrix2;
 use backend::bitmatrix_trait::*;
+use backend::bitvec::BitVec;
 use loader;
 
 pub struct BinaryLinearLayer {
@@ -28,5 +29,9 @@ impl BinaryLinearLayer {
       z.push(val);
     }
     return z;
+  }
+
+  pub fn forward(&self, x: &BitVec) -> Vec<i32> {
+    return self.weight.dot_vec(x);
   }
 }

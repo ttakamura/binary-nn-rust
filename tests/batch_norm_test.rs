@@ -26,4 +26,19 @@ mod batch_norm_layer_tests {
       assert_eq!(z.get(i as u32), b);
     }
   }
+
+  #[test]
+  fn forward_stack_test() {
+    let x = vec![128u8; 784];
+
+    let l1 = BinaryLinearLayer::load("tests/data01/binary_net.l1.W.dat".to_string(), 1000, 784);
+    let bn1 = BatchNormLayer::load("tests/data01/binary_net.b1.dat".to_string(), 1000);
+    let y1 = l1.forward_u8(&x);
+    let z1 = bn1.forward(&y1);
+
+    let l2 = BinaryLinearLayer::load("tests/data01/binary_net.l2.W.dat".to_string(), 1000, 1000);
+    let bn2 = BatchNormLayer::load("tests/data01/binary_net.b2.dat".to_string(), 1000);
+    let y2 = l2.forward(&z1);
+    let z2 = bn2.forward(&y2);
+  }
 }

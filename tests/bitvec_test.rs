@@ -101,13 +101,42 @@ mod bitvec_tests {
 
   #[test]
   fn bitvec_dot() {
-    let mut x = BitVec::falses(34);
-    let mut y = BitVec::falses(34);
-    x.set_true(30);
-    x.set_true(31);
-    y.set_true(31);
-    y.set_true(32);
-    let total = x.dot(&y);
-    assert_eq!(total, 32);
+    {
+      let x = BitVec::falses(4);
+      let y = BitVec::falses(4);
+      let total = x.dot(&y);
+      assert_eq!(total, 4);
+    }
+    {
+      let x = BitVec::falses(4);
+      let y = BitVec::trues(4);
+      let total = x.dot(&y);
+      assert_eq!(total, -4);
+    }
+    {
+      let mut x = BitVec::falses(4);
+      let y = BitVec::trues(4);
+      x.set_true(0);
+      x.set_true(1);
+      let total = x.dot(&y);
+      assert_eq!(total, 0);
+    }
+    {
+      let mut x = BitVec::falses(4);
+      let y = BitVec::trues(4);
+      x.set_true(0);
+      let total = x.dot(&y);
+      assert_eq!(total, -2);
+    }
+    {
+      let mut x = BitVec::falses(34);
+      let mut y = BitVec::falses(34);
+      x.set_true(30);
+      x.set_true(31);
+      y.set_true(31);
+      y.set_true(32);
+      let total = x.dot(&y);
+      assert_eq!(total, 30);
+    }
   }
 }
