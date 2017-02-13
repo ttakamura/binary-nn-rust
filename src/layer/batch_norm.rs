@@ -1,6 +1,6 @@
 use loader;
 use backend::bitvec::*;
-use binary_nn::backend::bitmatrix_trait::*;
+use backend::bitmatrix_trait::*;
 
 pub struct BatchNormLayer {
   // avg_mean: Vec<f32>,
@@ -43,13 +43,14 @@ impl BatchNormLayer {
   }
 
   pub fn forward(&self, x_vec: &Vec<i32>) -> BitVec {
-    let mut result = BitVec::falses(self.len());
-    for i in 0..self.len() {
+    let length = self.len();
+    let mut result = BitVec::falses(length as u32);
+    for i in 0..length {
       let z = x_vec[i] - self.threshold[i];
-      if z > 0.0 {
-        result.set_true(i);
+      if z >= 0 {
+        result.set_true(i as u32);
       } else {
-        result.set_false(i);
+        result.set_false(i as u32);
       }
     }
     return result;

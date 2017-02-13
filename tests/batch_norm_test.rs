@@ -4,6 +4,7 @@ mod batch_norm_layer_tests {
   use binary_nn::layer::linear::*;
   use binary_nn::layer::batch_norm::*;
   use binary_nn::loader;
+  use binary_nn::backend::bitmatrix_trait::*;
 
   #[test]
   fn load_test() {
@@ -20,11 +21,9 @@ mod batch_norm_layer_tests {
     let z = bn.forward(&y);
 
     let expected = loader::load_text_as_f32("tests/data01/output_bn.txt".to_string());
-    for (a, b) in z.iter().zip(expected.iter()) {
-      // println!("{}, {}", a, b);
-      let i = a > &0i32;
-      let j = b > &0.0f32;
-      assert_eq!(i, j);
+    for i in 0..expected.len() {
+      let b = expected[i] >= 0.0;
+      assert_eq!(z.get(i as u32), b);
     }
   }
 }
