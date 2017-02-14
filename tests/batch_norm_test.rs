@@ -40,5 +40,19 @@ mod batch_norm_layer_tests {
     let bn2 = BatchNormLayer::load("tests/data01/binary_net.b2.dat".to_string(), 1000);
     let y2 = l2.forward(&z1);
     let z2 = bn2.forward(&y2);
+
+    let expected = loader::load_text_as_f32("tests/data01/output_bn2.txt".to_string());
+    for i in 0..expected.len() {
+      if expected[i].abs() > 0.008 {
+        let b = expected[i] >= 0.0;
+        // println!("i {}, y {}, z {}, expected {}",
+        //          i,
+        //          y2[i],
+        //          z2.get(i as u32),
+        //          expected[i]);
+        assert_eq!(z2.get(i as u32), b);
+      }
+    }
+
   }
 }

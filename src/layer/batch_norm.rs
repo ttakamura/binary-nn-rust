@@ -47,6 +47,7 @@ impl BatchNormLayer {
     let mut result = BitVec::falses(length as u32);
     for i in 0..length {
       let z = x_vec[i] - self.threshold[i];
+      // println!("i {}, z {}", i, z);
       if z >= 0 {
         result.set_true(i as u32);
       } else {
