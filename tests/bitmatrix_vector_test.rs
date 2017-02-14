@@ -54,7 +54,7 @@ mod bitmatrix_vector_tests {
     let (x, y) = prepare_matrix();
     let x_vec = x.row_vec(1);
     let total = x_vec.dot(&y);
-    assert_eq!(total, 32);
+    assert_eq!(total, 30);
   }
 
   #[test]
@@ -62,8 +62,8 @@ mod bitmatrix_vector_tests {
     let (x, y) = prepare_matrix();
     let z: Vec<i32> = x.dot_vec(&y);
     assert_eq!(z.len(), 3);
-    assert_eq!(z[0], 31);
-    assert_eq!(z[1], 32);
-    assert_eq!(z[2], 31);
+    assert_eq!(z[0], 28);
+    assert_eq!(z[1], 30);
+    assert_eq!(z[2], 28);
   }
 }
