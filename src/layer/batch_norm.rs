@@ -3,10 +3,10 @@ use backend::bitvec::*;
 use backend::bitmatrix_trait::*;
 
 pub struct BatchNormLayer {
-  // avg_mean: Vec<f32>,
-  // avg_var: Vec<f32>,
-  // beta: Vec<f32>,
-  // gamma: Vec<f32>,
+  avg_mean: Vec<f32>,
+  avg_var: Vec<f32>,
+  beta: Vec<f32>,
+  gamma: Vec<f32>,
   pub threshold: Vec<i32>,
 }
 
@@ -22,10 +22,10 @@ impl BatchNormLayer {
     }
 
     return BatchNormLayer {
-      // avg_mean: avg_mean,
-      // avg_var: avg_var,
-      // beta: beta,
-      // gamma: gamma,
+      avg_mean: avg_mean,
+      avg_var: avg_var,
+      beta: beta,
+      gamma: gamma,
       threshold: threshold,
     };
   }
@@ -42,6 +42,21 @@ impl BatchNormLayer {
     return self.threshold.len();
   }
 
+  pub fn forward_f32(&self, x_vec: &Vec<i32>) -> Vec<f32> {
+    let length = self.len();
+    let mut result = Vec::new();
+    for i in 0..length {
+      let z = self.normalize(x_vec[i] as f32,
+                             self.avg_mean[i],
+                             self.avg_var[i],
+                             self.beta[i],
+                             self.gamma[i]);
+      // println!("i {}, z {}", i, z);
+      result.push(z);
+    }
+    return result;
+  }
+
   pub fn forward(&self, x_vec: &Vec<i32>) -> BitVec {
     let length = self.len();
     let mut result = BitVec::falses(length as u32);
@@ -55,5 +70,10 @@ impl BatchNormLayer {
       }
     }
     return result;
+  }
+
+  fn normalize(&self, x: f32, avg_mean: f32, avg_var: f32, beta: f32, gamma: f32) -> f32 {
+    let x_hat = (x - avg_mean) / (avg_var + 0.0001).sqrt();
+    return (gamma * x_hat) + beta;
   }
 }
