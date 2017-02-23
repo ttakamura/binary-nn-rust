@@ -63,7 +63,18 @@ impl BatchNormLayer {
     for i in 0..length {
       let z = x_vec[i] - self.threshold[i];
       // println!("i {}, z {}", i, z);
-      if z >= 0 {
+      if z == 0 {
+        let z2 = self.normalize(x_vec[i] as f32,
+                                self.avg_mean[i],
+                                self.avg_var[i],
+                                self.beta[i],
+                                self.gamma[i]);
+        if z2 > 0.0 {
+          result.set_true(i as u32);
+        } else {
+          result.set_false(i as u32);
+        }
+      } else if z >= 1 {
         result.set_true(i as u32);
       } else {
         result.set_false(i as u32);

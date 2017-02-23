@@ -1,7 +1,9 @@
 * 次にやること
   - [X] popcnt(x.xnor(y)) はマイナスhalfが必要？
-  - [ ] BatchNorm 近似が threshold 0 の場合に誤差が発生する
+  - [X] BatchNorm 近似が threshold 0 の場合に誤差が発生する
       -0.001 等の場合 float は -1 だが binary は +1 となる
       0 が出た場合は高精度で計算し直す？
   - [ ] Stackクラス
   - [ ] Signalクラス
+  - [ ] Benchmark
+    - [ ] set_true, set_false 遅い？
