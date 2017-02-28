@@ -26,46 +26,4 @@ mod batch_norm_layer_tests {
       assert_eq!(z.get(i as u32), b);
     }
   }
-
-  #[test]
-  fn forward_stack_test() {
-    let x = vec![128u8; 784];
-
-    let l1 = BinaryLinearLayer::load("tests/data01/binary_net.l1.W.dat".to_string(), 1000, 784);
-    let bn1 = BatchNormLayer::load("tests/data01/binary_net.b1.dat".to_string(), 1000);
-    let l2 = BinaryLinearLayer::load("tests/data01/binary_net.l2.W.dat".to_string(), 1000, 1000);
-    let bn2 = BatchNormLayer::load("tests/data01/binary_net.b2.dat".to_string(), 1000);
-    let l3 = BinaryLinearLayer::load("tests/data01/binary_net.l3.W.dat".to_string(), 10, 1000);
-    let bn3 = BatchNormLayer::load("tests/data01/binary_net.b3.dat".to_string(), 10);
-
-    let y1 = l1.forward_u8(&x);
-    let z1 = bn1.forward(&y1);
-
-    let y2 = l2.forward(&z1);
-    let z2 = bn2.forward(&y2);
-
-    let expected = loader::load_text_as_f32("tests/data01/output_bn2.txt".to_string());
-    for i in 0..expected.len() {
-      let b = expected[i] >= 0.0;
-      assert_eq!(z2.get(i as u32), b);
-    }
-
-    let y3 = l3.forward(&z2);
-    let z3 = bn3.forward_f32(&y3);
-
-    let expected = loader::load_text_as_f32("tests/data01/output_bn3.txt".to_string());
-    for i in 0..expected.len() {
-      let diff = (expected[i] - z3[i]).abs();
-      if diff == 0.0 {
-        assert!(true);
-      } else {
-        println!("bn3 - i {}, y {}, z {}, expected {}",
-                 i,
-                 y3[i],
-                 z3[i],
-                 expected[i]);
-        assert!(false, "diff {:?} should be small than the threshold", diff);
-      }
-    }
-  }
 }
