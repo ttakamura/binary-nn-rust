@@ -38,7 +38,7 @@ mod stack_tests {
 
   fn predict(prefix: String, data_path: String) -> usize {
     let data = loader::load_f32(data_path);
-    let x = data.into_iter().map(|b| (b * 256.0) as u8).collect();
+    let x = data.into_iter().map(|b| ((b * 255.0).round()) as u8).collect();
     let (_, _, z3) = forward(prefix, x);
     return argmax(z3);
   }
