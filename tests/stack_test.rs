@@ -31,20 +31,14 @@ mod stack_tests {
     let x = a.into_iter().map(|b| (b * 256.0) as u8).collect();
 
     let y1 = l1.forward_u8(&x);
-    let z1 = bn1.forward(&y1);
+    let z1 = bn1.forward_sign(&y1);
     let y2 = l2.forward(&z1);
-    let z2 = bn2.forward(&y2);
+    let z2 = bn2.forward_sign(&y2);
     let y3 = l3.forward(&z2);
     let z3 = bn3.forward_f32(&y3);
-    println!("{:?}", z3);
+    // println!("{:?}", z3);
     return argmax(z3);
   }
-
-  // create mode 100644 tests/data02/binary_net.x.1206.5.dat
-  // create mode 100644 tests/data02/binary_net.x.2001.8.dat
-  // create mode 100644 tests/data02/binary_net.x.3000.9.dat
-  // create mode 100644 tests/data02/binary_net.x.4000.7.dat
-  // create mode 100644 tests/data02/binary_net.x.8000.0.dat
 
   #[test]
   fn predict_test() {
@@ -76,9 +70,9 @@ mod stack_tests {
 
     let x = vec![128u8; 784];
     let y1 = l1.forward_u8(&x);
-    let z1 = bn1.forward(&y1);
+    let z1 = bn1.forward_sign(&y1);
     let y2 = l2.forward(&z1);
-    let z2 = bn2.forward(&y2);
+    let z2 = bn2.forward_sign(&y2);
     let y3 = l3.forward(&z2);
     let z3 = bn3.forward_f32(&y3);
 

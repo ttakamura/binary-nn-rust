@@ -57,7 +57,7 @@ impl BatchNormLayer {
     return result;
   }
 
-  pub fn forward(&self, x_vec: &Vec<i32>) -> BitVec {
+  pub fn forward_sign(&self, x_vec: &Vec<i32>) -> BitVec {
     let length = self.len();
     let mut result = BitVec::falses(length as u32);
     for i in 0..length {

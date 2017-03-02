@@ -18,7 +18,7 @@ mod batch_norm_layer_tests {
     let bn = BatchNormLayer::load("tests/data01/binary_net.b1.dat".to_string(), 1000);
     let x = vec![128u8; 784];
     let y = l.forward_u8(&x);
-    let z = bn.forward(&y);
+    let z = bn.forward_sign(&y);
 
     let expected = loader::load_text_as_f32("tests/data01/output_bn.txt".to_string());
     for i in 0..expected.len() {
