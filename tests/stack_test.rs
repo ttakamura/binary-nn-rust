@@ -19,17 +19,13 @@ mod stack_tests {
     return max_idx;
   }
 
-  fn predict(prefix: String, data_path: String) -> usize {
+  fn forward(prefix: String, x: Vec<u8>) -> (BitVec, BitVec, Vec<f32>) {
     let l1 = BinaryLinearLayer::load(prefix.clone() + "binary_net.l1.W.dat", 1000, 784);
     let bn1 = BatchNormLayer::load(prefix.clone() + "binary_net.b1.dat", 1000);
     let l2 = BinaryLinearLayer::load(prefix.clone() + "binary_net.l2.W.dat", 1000, 1000);
     let bn2 = BatchNormLayer::load(prefix.clone() + "binary_net.b2.dat", 1000);
     let l3 = BinaryLinearLayer::load(prefix.clone() + "binary_net.l3.W.dat", 10, 1000);
     let bn3 = BatchNormLayer::load(prefix.clone() + "binary_net.b3.dat", 10);
-
-    let a = loader::load_f32(data_path);
-    let x = a.into_iter().map(|b| (b * 256.0) as u8).collect();
-
     let y1 = l1.forward_u8(&x);
     let z1 = bn1.forward_sign(&y1);
     let y2 = l2.forward(&z1);
@@ -37,6 +33,13 @@ mod stack_tests {
     let y3 = l3.forward(&z2);
     let z3 = bn3.forward_f32(&y3);
     // println!("{:?}", z3);
+    return (z1, z2, z3);
+  }
+
+  fn predict(prefix: String, data_path: String) -> usize {
+    let data = loader::load_f32(data_path);
+    let x = data.into_iter().map(|b| (b * 256.0) as u8).collect();
+    let (_, _, z3) = forward(prefix, x);
     return argmax(z3);
   }
 
@@ -61,20 +64,8 @@ mod stack_tests {
 
   #[test]
   fn forward_stack_test() {
-    let l1 = BinaryLinearLayer::load("tests/data01/binary_net.l1.W.dat".to_string(), 1000, 784);
-    let bn1 = BatchNormLayer::load("tests/data01/binary_net.b1.dat".to_string(), 1000);
-    let l2 = BinaryLinearLayer::load("tests/data01/binary_net.l2.W.dat".to_string(), 1000, 1000);
-    let bn2 = BatchNormLayer::load("tests/data01/binary_net.b2.dat".to_string(), 1000);
-    let l3 = BinaryLinearLayer::load("tests/data01/binary_net.l3.W.dat".to_string(), 10, 1000);
-    let bn3 = BatchNormLayer::load("tests/data01/binary_net.b3.dat".to_string(), 10);
-
     let x = vec![128u8; 784];
-    let y1 = l1.forward_u8(&x);
-    let z1 = bn1.forward_sign(&y1);
-    let y2 = l2.forward(&z1);
-    let z2 = bn2.forward_sign(&y2);
-    let y3 = l3.forward(&z2);
-    let z3 = bn3.forward_f32(&y3);
+    let (_, z2, z3) = forward("tests/data01/".to_string(), x);
 
     let expected = loader::load_text_as_f32("tests/data01/output_bn2.txt".to_string());
     for i in 0..expected.len() {
