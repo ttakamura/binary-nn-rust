@@ -1,10 +1,23 @@
+extern crate bincode;
+
 use backend::bitmatrix::BitMatrix2;
 use backend::bitmatrix_trait::*;
 use backend::bitvec::BitVec;
+use layer::base::Layer;
 use loader;
 
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct BinaryLinearLayer {
   pub weight: BitMatrix2,
+}
+
+impl Layer for BinaryLinearLayer {
+  fn encode(&self) -> Vec<u8> {
+    return bincode::serialize(&self, bincode::Infinite).unwrap();
+  }
+  fn decode(vec: Vec<u8>) -> Self {
+    return bincode::deserialize(&vec[..]).unwrap();
+  }
 }
 
 impl BinaryLinearLayer {

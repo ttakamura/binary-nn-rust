@@ -62,7 +62,7 @@ pub trait Bitpack: Clone {
   }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Bitpack32 {
   storage: u32,
 }

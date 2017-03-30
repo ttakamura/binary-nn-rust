@@ -1,13 +1,26 @@
+extern crate bincode;
+
 use loader;
 use backend::bitvec::*;
 use backend::bitmatrix_trait::*;
+use layer::base::Layer;
 
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct BatchNormLayer {
   avg_mean: Vec<f32>,
   avg_var: Vec<f32>,
   beta: Vec<f32>,
   gamma: Vec<f32>,
   pub threshold: Vec<i32>,
+}
+
+impl Layer for BatchNormLayer {
+  fn encode(&self) -> Vec<u8> {
+    return bincode::serialize(&self, bincode::Infinite).unwrap();
+  }
+  fn decode(vec: Vec<u8>) -> Self {
+    return bincode::deserialize(&vec[..]).unwrap();
+  }
 }
 
 impl BatchNormLayer {

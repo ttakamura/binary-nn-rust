@@ -5,7 +5,7 @@ use backend::bitmatrix_trait::*;
 use backend::bititer::*;
 use backend::bitvec::*;
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct BitMatrix2 {
   storage: Vec<Bitpack32>,
   nbits: (u32, u32), // (row, col)
