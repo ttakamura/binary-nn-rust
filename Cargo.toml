@@ -1,5 +1,5 @@
 [package]
-name = "binary-nn"
+name = "binary_nn"
 version = "0.1.0"
 authors = ["Tatsuya Takamura"]
 
