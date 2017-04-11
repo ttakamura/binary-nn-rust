@@ -34,4 +34,11 @@ pub trait Network
       }
     };
   }
+
+  fn deserialize(data: &Vec<u8>) -> Self {
+    return match bincode::deserialize(data) {
+      Ok(net) => net,
+      Err(why) => panic!("Couldn't deserialize {}", Error::description(&why)),
+    };
+  }
 }
