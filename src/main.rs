@@ -1,9 +1,22 @@
+#[macro_use]
+extern crate serde_derive;
+
+extern crate bincode;
+
 extern crate binary_nn;
 use binary_nn::backend::bitmatrix_trait::*;
 use binary_nn::layer::base::*;
 use binary_nn::layer::batch_norm::*;
 use binary_nn::layer::linear::*;
 use binary_nn::loader;
+use binary_nn::network::Network;
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+struct SampleNetwork {
+  l1: BinaryLinearLayer,
+}
+
+impl Network for SampleNetwork {}
 
 fn main() {
   let l1 = BinaryLinearLayer::load("data/binary_net.l1.W.dat".to_string(), 1000, 784);
@@ -41,4 +54,10 @@ fn main() {
 
   let x = loader::load_text_as_f32("data/output_bn.txt".to_string());
   println!("x[100] {}", x[100]);
+
+  let net = SampleNetwork { l1: l1 };
+  net.serialize_into("data/hoge.bin".to_string());
+
+  let net2 = SampleNetwork::deserialize_from("data/hoge.bin".to_string());
+  println!("net == net2 {:?}", net == net2);
 }
