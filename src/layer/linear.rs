@@ -21,7 +21,7 @@ impl Layer for BinaryLinearLayer {
 }
 
 impl BinaryLinearLayer {
-  pub fn load(path: String, nrow: u32, ncol: u32) -> BinaryLinearLayer {
+  pub fn load(path: &str, nrow: u32, ncol: u32) -> BinaryLinearLayer {
     let weight = loader::load_f32_as_bitmatrix(path, nrow, ncol);
     return BinaryLinearLayer { weight: weight };
   }

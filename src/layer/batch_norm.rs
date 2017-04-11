@@ -43,7 +43,7 @@ impl BatchNormLayer {
     };
   }
 
-  pub fn load(path: String, nrow: usize) -> BatchNormLayer {
+  pub fn load(path: &str, nrow: usize) -> BatchNormLayer {
     let mut avg_mean = loader::load_f32(path);
     let mut avg_var = avg_mean.split_off(nrow);
     let mut beta = avg_var.split_off(nrow);

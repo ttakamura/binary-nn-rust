@@ -8,7 +8,7 @@ use backend::bitmatrix::BitMatrix2;
 use backend::bitvec::BitVec;
 use backend::bitmatrix_trait::BitMatrixMut;
 
-pub fn load_text_as_i32(path: String) -> Vec<i32> {
+pub fn load_text_as_i32(path: &str) -> Vec<i32> {
   let buffer = load_text(path);
   let mut vec = Vec::new();
   for line in buffer.lines() {
@@ -17,7 +17,7 @@ pub fn load_text_as_i32(path: String) -> Vec<i32> {
   return vec;
 }
 
-pub fn load_text_as_f32(path: String) -> Vec<f32> {
+pub fn load_text_as_f32(path: &str) -> Vec<f32> {
   let buffer = load_text(path);
   let mut vec = Vec::new();
   for line in buffer.lines() {
@@ -26,12 +26,12 @@ pub fn load_text_as_f32(path: String) -> Vec<f32> {
   return vec;
 }
 
-pub fn load_f32_as_bitvec(path: String, nbits: u32) -> BitVec {
+pub fn load_f32_as_bitvec(path: &str, nbits: u32) -> BitVec {
   let f32_vec = load_f32(path);
   return load_as_bitvec(&f32_vec, 0, nbits);
 }
 
-pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
+pub fn load_f32_as_bitmatrix(path: &str, nrow: u32, ncol: u32) -> BitMatrix2 {
   let f32_vec = load_f32(path);
   let mut bit_mat = BitMatrix2::falses((nrow, ncol));
   let mut idx = 0;
@@ -44,7 +44,7 @@ pub fn load_f32_as_bitmatrix(path: String, nrow: u32, ncol: u32) -> BitMatrix2 {
   return bit_mat;
 }
 
-pub fn load_f32(path: String) -> Vec<f32> {
+pub fn load_f32(path: &str) -> Vec<f32> {
   let buffer: Vec<u8> = load_binary(path);
   let mut result: Vec<f32> = Vec::new();
   for chunk in buffer.chunks(4) {
@@ -55,9 +55,9 @@ pub fn load_f32(path: String) -> Vec<f32> {
 
 // -- PRIVATE --
 
-fn load_text(path: String) -> String {
+fn load_text(path: &str) -> String {
   let mut buffer = String::new();
-  let mut f = match File::open(&path) {
+  let mut f = match File::open(path) {
     Ok(file) => file,
     Err(why) => panic!("Couldn't open {}, {}", path, Error::description(&why)),
   };
@@ -68,9 +68,9 @@ fn load_text(path: String) -> String {
   return buffer;
 }
 
-fn load_binary(path: String) -> Vec<u8> {
+fn load_binary(path: &str) -> Vec<u8> {
   let mut buffer: Vec<u8> = Vec::new();
-  let mut f = match File::open(&path) {
+  let mut f = match File::open(path) {
     Ok(file) => file,
     Err(why) => panic!("couldn't open {}, {}", path, Error::description(&why)),
   };

@@ -20,12 +20,14 @@ mod stack_tests {
   }
 
   fn forward(prefix: String, x: Vec<u8>) -> (BitVec, BitVec, Vec<f32>) {
-    let l1 = BinaryLinearLayer::load(prefix.clone() + "binary_net.l1.W.dat", 1000, 784);
-    let bn1 = BatchNormLayer::load(prefix.clone() + "binary_net.b1.dat", 1000);
-    let l2 = BinaryLinearLayer::load(prefix.clone() + "binary_net.l2.W.dat", 1000, 1000);
-    let bn2 = BatchNormLayer::load(prefix.clone() + "binary_net.b2.dat", 1000);
-    let l3 = BinaryLinearLayer::load(prefix.clone() + "binary_net.l3.W.dat", 10, 1000);
-    let bn3 = BatchNormLayer::load(prefix.clone() + "binary_net.b3.dat", 10);
+    let l1 = BinaryLinearLayer::load((prefix.clone() + "binary_net.l1.W.dat").as_str(), 1000, 784);
+    let bn1 = BatchNormLayer::load((prefix.clone() + "binary_net.b1.dat").as_str(), 1000);
+    let l2 = BinaryLinearLayer::load((prefix.clone() + "binary_net.l2.W.dat").as_str(),
+                                     1000,
+                                     1000);
+    let bn2 = BatchNormLayer::load((prefix.clone() + "binary_net.b2.dat").as_str(), 1000);
+    let l3 = BinaryLinearLayer::load((prefix.clone() + "binary_net.l3.W.dat").as_str(), 10, 1000);
+    let bn3 = BatchNormLayer::load((prefix.clone() + "binary_net.b3.dat").as_str(), 10);
     let y1 = l1.forward_u8(&x);
     let z1 = bn1.forward_sign(&y1);
     let y2 = l2.forward(&z1);
@@ -36,7 +38,7 @@ mod stack_tests {
     return (z1, z2, z3);
   }
 
-  fn predict(prefix: String, data_path: String) -> usize {
+  fn predict(prefix: String, data_path: &str) -> usize {
     let data = loader::load_f32(data_path);
     let x = data.into_iter().map(|b| ((b * 255.0).round()) as u8).collect();
     let (_, _, z3) = forward(prefix, x);
@@ -46,19 +48,19 @@ mod stack_tests {
   #[test]
   fn predict_test() {
     let y = predict("tests/data02/".to_string(),
-                    "tests/data02/binary_net.x.1206.5.dat".to_string());
+                    "tests/data02/binary_net.x.1206.5.dat");
     assert_eq!(y, 5);
 
     let y = predict("tests/data02/".to_string(),
-                    "tests/data02/binary_net.x.2001.8.dat".to_string());
+                    "tests/data02/binary_net.x.2001.8.dat");
     assert_eq!(y, 8);
 
     let y = predict("tests/data02/".to_string(),
-                    "tests/data02/binary_net.x.3000.9.dat".to_string());
+                    "tests/data02/binary_net.x.3000.9.dat");
     assert_eq!(y, 9);
 
     let y = predict("tests/data02/".to_string(),
-                    "tests/data02/binary_net.x.4000.7.dat".to_string());
+                    "tests/data02/binary_net.x.4000.7.dat");
     assert_eq!(y, 7);
   }
 
@@ -67,13 +69,13 @@ mod stack_tests {
     let x = vec![128u8; 784];
     let (_, z2, z3) = forward("tests/data01/".to_string(), x);
 
-    let expected = loader::load_text_as_f32("tests/data01/output_bn2.txt".to_string());
+    let expected = loader::load_text_as_f32("tests/data01/output_bn2.txt");
     for i in 0..expected.len() {
       let b = expected[i] >= 0.0;
       assert_eq!(z2.get(i as u32), b);
     }
 
-    let expected = loader::load_text_as_f32("tests/data01/output_bn3.txt".to_string());
+    let expected = loader::load_text_as_f32("tests/data01/output_bn3.txt");
     for i in 0..expected.len() {
       let diff = (expected[i] - z3[i]).abs();
       if diff == 0.0 {

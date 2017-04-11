@@ -9,8 +9,8 @@ pub trait Network
         Self: serde::Deserialize,
         Self: Sized
 {
-  fn serialize_into(&self, path: String) {
-    let mut file = match File::create(&path) {
+  fn serialize_into(&self, path: &str) {
+    let mut file = match File::create(path) {
       Ok(file) => file,
       Err(why) => panic!("Couldn't create {}, {}", path, Error::description(&why)),
     };
@@ -20,8 +20,8 @@ pub trait Network
     };
   }
 
-  fn deserialize_from(path: String) -> Self {
-    let mut file = match File::open(&path) {
+  fn deserialize_from(path: &str) -> Self {
+    let mut file = match File::open(path) {
       Ok(file) => file,
       Err(why) => panic!("Couldn't open {}, {}", path, Error::description(&why)),
     };

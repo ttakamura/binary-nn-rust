@@ -19,7 +19,7 @@ struct SampleNetwork {
 impl Network for SampleNetwork {}
 
 fn main() {
-  let l1 = BinaryLinearLayer::load("data/binary_net.l1.W.dat".to_string(), 1000, 784);
+  let l1 = BinaryLinearLayer::load("data/binary_net.l1.W.dat", 1000, 784);
   println!("l1[0, 0]   {}", l1.weight.get((0, 0)));
   println!("l1[999, 783] {}", l1.weight.get((999, 783)));
 
@@ -35,7 +35,7 @@ fn main() {
   println!("z[500] {}", z[500]);
   println!("z[999] {}", z[999]);
 
-  let bn = BatchNormLayer::load("data/binary_net.b1.dat".to_string(), 1000);
+  let bn = BatchNormLayer::load("data/binary_net.b1.dat", 1000);
   println!("bn.len {}", bn.len());
   println!("bn.threshold[100] {}", bn.threshold[100]);
   println!("bn.threshold[200] {}", bn.threshold[200]);
@@ -49,15 +49,15 @@ fn main() {
   println!("bn2.threshold[200] {}", bn2.threshold[200]);
   println!("bn2.threshold[300] {}", bn2.threshold[300]);
 
-  let x = loader::load_text_as_i32("data/output_y.txt".to_string());
+  let x = loader::load_text_as_i32("data/output_y.txt");
   println!("x[100] {}", x[100]);
 
-  let x = loader::load_text_as_f32("data/output_bn.txt".to_string());
+  let x = loader::load_text_as_f32("data/output_bn.txt");
   println!("x[100] {}", x[100]);
 
   let net = SampleNetwork { l1: l1 };
-  net.serialize_into("data/hoge.bin".to_string());
+  net.serialize_into("data/hoge.bin");
 
-  let net2 = SampleNetwork::deserialize_from("data/hoge.bin".to_string());
+  let net2 = SampleNetwork::deserialize_from("data/hoge.bin");
   println!("net == net2 {:?}", net == net2);
 }
