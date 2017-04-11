@@ -57,26 +57,26 @@ pub fn load_f32(path: String) -> Vec<f32> {
 
 fn load_text(path: String) -> String {
   let mut buffer = String::new();
-  let mut f = match File::open(path) {
+  let mut f = match File::open(&path) {
     Ok(file) => file,
-    Err(why) => panic!("Couldn't open {}", Error::description(&why)),
+    Err(why) => panic!("Couldn't open {}, {}", path, Error::description(&why)),
   };
   match f.read_to_string(&mut buffer) {
     Ok(_) => {}
-    Err(why) => panic!("Couldn't read {}", Error::description(&why)),
+    Err(why) => panic!("Couldn't read {}, {}", path, Error::description(&why)),
   };
   return buffer;
 }
 
 fn load_binary(path: String) -> Vec<u8> {
   let mut buffer: Vec<u8> = Vec::new();
-  let mut f = match File::open(path) {
+  let mut f = match File::open(&path) {
     Ok(file) => file,
-    Err(why) => panic!("couldn't open {}", Error::description(&why)),
+    Err(why) => panic!("couldn't open {}, {}", path, Error::description(&why)),
   };
   match f.read_to_end(&mut buffer) {
     Ok(_) => println!("success load"),
-    Err(why) => panic!("couldn't open {}", Error::description(&why)),
+    Err(why) => panic!("couldn't read {}, {}", path, Error::description(&why)),
   };
   return buffer;
 }
